@@ -3,16 +3,16 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 50;
+	objectVersion = 77;
 	objects = {
 
 /* Begin PBXBuildFile section */
-		07C2814F2ED1D55200B521E5 /* nsp_service.mm in Sources */ = {isa = PBXBuildFile; fileRef = 07C2814E2ED1D55200B521E5 /* nsp_service.mm */; };
-		07DE30A52ED1D4C700268185 /* channel_data.mm in Sources */ = {isa = PBXBuildFile; fileRef = 07DE309A2ED1D4C700268185 /* channel_data.mm */; };
-		07DE30A72ED1D4C700268185 /* nsp_converter.mm in Sources */ = {isa = PBXBuildFile; fileRef = 07DE30A22ED1D4C700268185 /* nsp_converter.mm */; };
-		07DE30A92ED1D4C700268185 /* notification_data.mm in Sources */ = {isa = PBXBuildFile; fileRef = 07DE309E2ED1D4C700268185 /* notification_data.mm */; };
-		90CAAA9924E71FF10013969F /* notification_scheduler_plugin.mm in Sources */ = {isa = PBXBuildFile; fileRef = 90CAAA9824E71FF10013969F /* notification_scheduler_plugin.mm */; };
-		90CAAAA424E724C50013969F /* notification_scheduler_plugin_implementation.mm in Sources */ = {isa = PBXBuildFile; fileRef = 90CAAAA324E724C50013969F /* notification_scheduler_plugin_implementation.mm */; };
+		07FADD342F34AD4C00528354 /* notification_scheduler_plugin.mm in Sources */ = {isa = PBXBuildFile; fileRef = 07FADD2B2F34AD4C00528354 /* notification_scheduler_plugin.mm */; };
+		07FADD352F34AD4C00528354 /* notification_data.mm in Sources */ = {isa = PBXBuildFile; fileRef = 07FADD282F34AD4C00528354 /* notification_data.mm */; };
+		07FADD362F34AD4C00528354 /* channel_data.mm in Sources */ = {isa = PBXBuildFile; fileRef = 07FADD262F34AD4C00528354 /* channel_data.mm */; };
+		07FADD372F34AD4C00528354 /* nsp_service.mm in Sources */ = {isa = PBXBuildFile; fileRef = 07FADD322F34AD4C00528354 /* nsp_service.mm */; };
+		07FADD382F34AD4C00528354 /* notification_scheduler_plugin_bootstrap.mm in Sources */ = {isa = PBXBuildFile; fileRef = 07FADD2D2F34AD4C00528354 /* notification_scheduler_plugin_bootstrap.mm */; };
+		07FADD392F34AD4C00528354 /* nsp_converter.mm in Sources */ = {isa = PBXBuildFile; fileRef = 07FADD302F34AD4C00528354 /* nsp_converter.mm */; };
 		94A1B0B2910D06DA0F4D3D3C /* Pods_notification_scheduler_plugin.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 380C444E6383B0C8ACA7CA7D /* Pods_notification_scheduler_plugin.framework */; };
 /* End PBXBuildFile section */
 
@@ -29,25 +29,23 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		073B52C32ECF241C0063663B /* notification_scheduler_plugin-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "notification_scheduler_plugin-Bridging-Header.h"; sourceTree = "<group>"; };
-		07C2814D2ED1D55200B521E5 /* nsp_service.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = nsp_service.h; sourceTree = "<group>"; };
-		07C2814E2ED1D55200B521E5 /* nsp_service.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = nsp_service.mm; sourceTree = "<group>"; };
-		07DE30982ED1D4C700268185 /* channel_data.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = channel_data.h; sourceTree = "<group>"; };
-		07DE309A2ED1D4C700268185 /* channel_data.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = channel_data.mm; sourceTree = "<group>"; };
-		07DE309C2ED1D4C700268185 /* notification_data.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = notification_data.h; sourceTree = "<group>"; };
-		07DE309E2ED1D4C700268185 /* notification_data.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = notification_data.mm; sourceTree = "<group>"; };
-		07DE30A12ED1D4C700268185 /* nsp_converter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = nsp_converter.h; sourceTree = "<group>"; };
-		07DE30A22ED1D4C700268185 /* nsp_converter.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = nsp_converter.mm; sourceTree = "<group>"; };
+		07FADD252F34AD4C00528354 /* channel_data.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = channel_data.h; sourceTree = "<group>"; };
+		07FADD262F34AD4C00528354 /* channel_data.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = channel_data.mm; sourceTree = "<group>"; };
+		07FADD272F34AD4C00528354 /* notification_data.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = notification_data.h; sourceTree = "<group>"; };
+		07FADD282F34AD4C00528354 /* notification_data.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = notification_data.mm; sourceTree = "<group>"; };
+		07FADD2A2F34AD4C00528354 /* notification_scheduler_plugin.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = notification_scheduler_plugin.h; sourceTree = "<group>"; };
+		07FADD2B2F34AD4C00528354 /* notification_scheduler_plugin.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = notification_scheduler_plugin.mm; sourceTree = "<group>"; };
+		07FADD2C2F34AD4C00528354 /* notification_scheduler_plugin_bootstrap.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = notification_scheduler_plugin_bootstrap.h; sourceTree = "<group>"; };
+		07FADD2D2F34AD4C00528354 /* notification_scheduler_plugin_bootstrap.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = notification_scheduler_plugin_bootstrap.mm; sourceTree = "<group>"; };
+		07FADD2E2F34AD4C00528354 /* notification_scheduler_plugin-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "notification_scheduler_plugin-Bridging-Header.h"; sourceTree = "<group>"; };
+		07FADD2F2F34AD4C00528354 /* nsp_converter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = nsp_converter.h; sourceTree = "<group>"; };
+		07FADD302F34AD4C00528354 /* nsp_converter.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = nsp_converter.mm; sourceTree = "<group>"; };
+		07FADD312F34AD4C00528354 /* nsp_service.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = nsp_service.h; sourceTree = "<group>"; };
+		07FADD322F34AD4C00528354 /* nsp_service.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = nsp_service.mm; sourceTree = "<group>"; };
 		1A3D1E30D9DC57319C20B62B /* Pods-notification_scheduler_plugin.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-notification_scheduler_plugin.release.xcconfig"; path = "Target Support Files/Pods-notification_scheduler_plugin/Pods-notification_scheduler_plugin.release.xcconfig"; sourceTree = "<group>"; };
 		380C444E6383B0C8ACA7CA7D /* Pods_notification_scheduler_plugin.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_notification_scheduler_plugin.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		403D7C7BCFBA671DEF15AE95 /* Pods-notification_scheduler_plugin.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-notification_scheduler_plugin.debug.xcconfig"; path = "Target Support Files/Pods-notification_scheduler_plugin/Pods-notification_scheduler_plugin.debug.xcconfig"; sourceTree = "<group>"; };
 		90CAAA9424E71FF10013969F /* libnotification_scheduler_plugin.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libnotification_scheduler_plugin.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		90CAAA9724E71FF10013969F /* notification_scheduler_plugin.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = notification_scheduler_plugin.h; sourceTree = "<group>"; };
-		90CAAA9824E71FF10013969F /* notification_scheduler_plugin.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = notification_scheduler_plugin.mm; sourceTree = "<group>"; };
-		90CAAAA324E724C50013969F /* notification_scheduler_plugin_implementation.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = notification_scheduler_plugin_implementation.mm; sourceTree = "<group>"; };
-		90CAAAA524E724D00013969F /* notification_scheduler_plugin_implementation.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = notification_scheduler_plugin_implementation.h; sourceTree = "<group>"; };
-		AAE936A0178A8EA9BB753CEA /* Pods-notification_scheduler_plugin_implementation.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-notification_scheduler_plugin_implementation.debug.xcconfig"; path = "Target Support Files/Pods-inapp_review_plugin/Pods-notification_scheduler_plugin_implementation.debug.xcconfig"; sourceTree = "<group>"; };
-		D5F7A9D28867FD798F31BF3B /* Pods-notification_scheduler_plugin_implementation.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-notification_scheduler_plugin_implementation.release.xcconfig"; path = "Target Support Files/Pods-inapp_review_plugin/Pods-notification_scheduler_plugin_implementation.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -62,15 +60,32 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		07DE30A02ED1D4C700268185 /* model */ = {
+		07FADD292F34AD4C00528354 /* model */ = {
 			isa = PBXGroup;
 			children = (
-				07DE30982ED1D4C700268185 /* channel_data.h */,
-				07DE309A2ED1D4C700268185 /* channel_data.mm */,
-				07DE309C2ED1D4C700268185 /* notification_data.h */,
-				07DE309E2ED1D4C700268185 /* notification_data.mm */,
+				07FADD252F34AD4C00528354 /* channel_data.h */,
+				07FADD262F34AD4C00528354 /* channel_data.mm */,
+				07FADD272F34AD4C00528354 /* notification_data.h */,
+				07FADD282F34AD4C00528354 /* notification_data.mm */,
 			);
 			path = model;
+			sourceTree = "<group>";
+		};
+		07FADD332F34AD4C00528354 /* src */ = {
+			isa = PBXGroup;
+			children = (
+				07FADD292F34AD4C00528354 /* model */,
+				07FADD2A2F34AD4C00528354 /* notification_scheduler_plugin.h */,
+				07FADD2B2F34AD4C00528354 /* notification_scheduler_plugin.mm */,
+				07FADD2C2F34AD4C00528354 /* notification_scheduler_plugin_bootstrap.h */,
+				07FADD2D2F34AD4C00528354 /* notification_scheduler_plugin_bootstrap.mm */,
+				07FADD2E2F34AD4C00528354 /* notification_scheduler_plugin-Bridging-Header.h */,
+				07FADD2F2F34AD4C00528354 /* nsp_converter.h */,
+				07FADD302F34AD4C00528354 /* nsp_converter.mm */,
+				07FADD312F34AD4C00528354 /* nsp_service.h */,
+				07FADD322F34AD4C00528354 /* nsp_service.mm */,
+			);
+			path = src;
 			sourceTree = "<group>";
 		};
 		66EA7AD27171A8F93A267403 /* Pods */ = {
@@ -78,8 +93,6 @@
 			children = (
 				403D7C7BCFBA671DEF15AE95 /* Pods-notification_scheduler_plugin.debug.xcconfig */,
 				1A3D1E30D9DC57319C20B62B /* Pods-notification_scheduler_plugin.release.xcconfig */,
-				AAE936A0178A8EA9BB753CEA /* Pods-notification_scheduler_plugin_implementation.debug.xcconfig */,
-				D5F7A9D28867FD798F31BF3B /* Pods-notification_scheduler_plugin_implementation.release.xcconfig */,
 			);
 			path = Pods;
 			sourceTree = "<group>";
@@ -87,7 +100,7 @@
 		90CAAA8B24E71FF10013969F = {
 			isa = PBXGroup;
 			children = (
-				90CAAA9624E71FF10013969F /* notification_scheduler */,
+				07FADD332F34AD4C00528354 /* src */,
 				90CAAA9524E71FF10013969F /* Products */,
 				90CAAAA824E72A8A0013969F /* Frameworks */,
 				66EA7AD27171A8F93A267403 /* Pods */,
@@ -100,23 +113,6 @@
 				90CAAA9424E71FF10013969F /* libnotification_scheduler_plugin.a */,
 			);
 			name = Products;
-			sourceTree = "<group>";
-		};
-		90CAAA9624E71FF10013969F /* notification_scheduler */ = {
-			isa = PBXGroup;
-			children = (
-				07C2814D2ED1D55200B521E5 /* nsp_service.h */,
-				07C2814E2ED1D55200B521E5 /* nsp_service.mm */,
-				07DE30A02ED1D4C700268185 /* model */,
-				07DE30A12ED1D4C700268185 /* nsp_converter.h */,
-				07DE30A22ED1D4C700268185 /* nsp_converter.mm */,
-				073B52C32ECF241C0063663B /* notification_scheduler_plugin-Bridging-Header.h */,
-				90CAAA9724E71FF10013969F /* notification_scheduler_plugin.h */,
-				90CAAA9824E71FF10013969F /* notification_scheduler_plugin.mm */,
-				90CAAAA524E724D00013969F /* notification_scheduler_plugin_implementation.h */,
-				90CAAAA324E724C50013969F /* notification_scheduler_plugin_implementation.mm */,
-			);
-			path = notification_scheduler;
 			sourceTree = "<group>";
 		};
 		90CAAAA824E72A8A0013969F /* Frameworks */ = {
@@ -211,12 +207,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				90CAAAA424E724C50013969F /* notification_scheduler_plugin_implementation.mm in Sources */,
-				07DE30A52ED1D4C700268185 /* channel_data.mm in Sources */,
-				07DE30A72ED1D4C700268185 /* nsp_converter.mm in Sources */,
-				07DE30A92ED1D4C700268185 /* notification_data.mm in Sources */,
-				90CAAA9924E71FF10013969F /* notification_scheduler_plugin.mm in Sources */,
-				07C2814F2ED1D55200B521E5 /* nsp_service.mm in Sources */,
+				07FADD342F34AD4C00528354 /* notification_scheduler_plugin.mm in Sources */,
+				07FADD352F34AD4C00528354 /* notification_data.mm in Sources */,
+				07FADD362F34AD4C00528354 /* channel_data.mm in Sources */,
+				07FADD372F34AD4C00528354 /* nsp_service.mm in Sources */,
+				07FADD382F34AD4C00528354 /* notification_scheduler_plugin_bootstrap.mm in Sources */,
+				07FADD392F34AD4C00528354 /* nsp_converter.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -338,7 +334,9 @@
 			baseConfigurationReference = 403D7C7BCFBA671DEF15AE95 /* Pods-notification_scheduler_plugin.debug.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
-				HEADER_SEARCH_PATHS = "";
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+				);
 				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -368,7 +366,6 @@
 					"-fblocks",
 					"-fvisibility=hidden",
 					"-MMD",
-					"-MT",
 					"-fno-exceptions",
 					"-Wno-ambiguous-macro",
 					"-Wall",
@@ -391,6 +388,7 @@
 					"-DIPHONE_ENABLED",
 					"-DUNIX_ENABLED",
 					"-DCOREAUDIO_ENABLED",
+					"-DAPPLE_EMBEDDED_ENABLED",
 					"-isystem",
 					"$(SRCROOT)/godot",
 					"-isystem",
@@ -399,18 +397,11 @@
 					"$(SRCROOT)/godot/platform/ios",
 				);
 				OTHER_LDFLAGS = (
-					"-ObjC",
-					"-framework",
-					os,
-					"-lswiftCore",
-					"-lswiftDispatch",
-					"-lswiftObjectiveC",
-					"-lswiftUIKit",
-					"-lswiftFoundation",
+					"$(inherited)",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
-				SWIFT_OBJC_BRIDGING_HEADER = "deeplink/notification_scheduler_plugin-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "src/notification_scheduler_plugin-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.9;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -422,7 +413,9 @@
 			baseConfigurationReference = 1A3D1E30D9DC57319C20B62B /* Pods-notification_scheduler_plugin.release.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
-				HEADER_SEARCH_PATHS = "";
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+				);
 				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -446,7 +439,6 @@
 					"-fblocks",
 					"-fvisibility=hidden",
 					"-MMD",
-					"-MT",
 					"-fno-exceptions",
 					"-Wno-ambiguous-macro",
 					"-Wall",
@@ -466,6 +458,7 @@
 					"-DIPHONE_ENABLED",
 					"-DUNIX_ENABLED",
 					"-DCOREAUDIO_ENABLED",
+					"-DAPPLE_EMBEDDED_ENABLED",
 					"-isystem",
 					"$(SRCROOT)/godot",
 					"-isystem",
@@ -474,18 +467,11 @@
 					"$(SRCROOT)/godot/platform/ios",
 				);
 				OTHER_LDFLAGS = (
-					"-ObjC",
-					"-framework",
-					os,
-					"-lswiftCore",
-					"-lswiftDispatch",
-					"-lswiftObjectiveC",
-					"-lswiftUIKit",
-					"-lswiftFoundation",
+					"$(inherited)",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
-				SWIFT_OBJC_BRIDGING_HEADER = "deeplink/notification_scheduler_plugin-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "src/notification_scheduler_plugin-Bridging-Header.h";
 				SWIFT_VERSION = 5.9;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};

@@ -16,10 +16,14 @@ dependencyResolutionManagement {
 		google()
 		mavenCentral()
 		flatDir {
-			dirs("${rootDir}/libs")
+			dirs("${rootDir}/../android/libs")
 		}
 	}
 }
 
 rootProject.name = "godot-notification-scheduler-plugin"
-include(":notification_scheduler")
+include(":android")
+include(":addon")
+
+project(":android").projectDir = file("../android")
+project(":addon").projectDir = file("../addon")

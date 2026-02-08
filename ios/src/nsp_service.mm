@@ -4,7 +4,7 @@
 
 #import <UserNotifications/UserNotifications.h>
 #import "godot_app_delegate.h"
-#import "notification_scheduler_plugin_implementation.h"
+#import "notification_scheduler_plugin.h"
 #import "nsp_service.h"
 
 struct NSPServiceInitializer {

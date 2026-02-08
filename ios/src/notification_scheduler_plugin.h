@@ -2,8 +2,8 @@
 // © 2024-present https://github.com/cengiz-pz
 //
 
-#ifndef notification_scheduler_plugin_implementation_h
-#define notification_scheduler_plugin_implementation_h
+#ifndef notification_scheduler_plugin_h
+#define notification_scheduler_plugin_h
 
 #include "core/object/object.h"
 #include "core/object/class_db.h"
@@ -60,4 +60,4 @@ public:
 	~NotificationSchedulerPlugin();
 };
 
-#endif /* notification_scheduler_plugin_implementation_h */
+#endif /* notification_scheduler_plugin_h */

@@ -1,12 +1,12 @@
 <p align="center">
-	<img width="256" height="256" src="https://raw.githubusercontent.com/godot-sdk-integrations/godot-notification-scheduler/main/demo/assets/notification-scheduler-android.png">
+	<img width="256" height="256" src="https://raw.githubusercontent.com/godot-mobile-plugins/godot-notification-scheduler/main/demo/assets/notification-scheduler-android.png">
 	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-	<img width="256" height="256" src="https://raw.githubusercontent.com/godot-sdk-integrations/godot-notification-scheduler/main/demo/assets/notification-scheduler-ios.png">
+	<img width="256" height="256" src="https://raw.githubusercontent.com/godot-mobile-plugins/godot-notification-scheduler/main/demo/assets/notification-scheduler-ios.png">
 </p>
 
 ---
 
-# <img src="https://raw.githubusercontent.com/godot-sdk-integrations/godot-notification-scheduler/main/addon/icon.png" width="24"> Godot Notification Scheduler Plugin
+# <img src="https://raw.githubusercontent.com/godot-mobile-plugins/godot-notification-scheduler/main/addon/src/icon.png" width="24"> Godot Notification Scheduler Plugin
 
 A unified GDScript interface for scheduling **local notifications** on **Android** and **iOS**.
 
@@ -19,12 +19,15 @@ A unified GDScript interface for scheduling **local notifications** on **Android
 
 ---
 
-## <img src="https://raw.githubusercontent.com/godot-sdk-integrations/godot-notification-scheduler/main/addon/icon.png" width="20"> Table of Contents
+## <img src="https://raw.githubusercontent.com/godot-mobile-plugins/godot-notification-scheduler/main/addon/src/icon.png" width="20"> Table of Contents
+
+- [Demo](#demo)
 - [Installation](#installation)
 - [Usage](#usage)
 - [Signals](#signals)
 - [Methods](#methods)
 - [Error Codes](#error-codes)
+- [Classes](#classes)
 - [Classes](#classes)
 - [Platform-Specific Notes](#platform-specific-notes)
 - [Video Tutorials](#video-tutorials)
@@ -35,9 +38,21 @@ A unified GDScript interface for scheduling **local notifications** on **Android
 
 ---
 
+<a name="demo"></a>
+
+## <img src="https://raw.githubusercontent.com/godot-mobile-plugins/godot-notification-scheduler/main/addon/src/icon.png" width="20"> Demo
+
+Try the **demo app** located in the `demo` directory.
+
+<p align="center">
+	<img src="https://raw.githubusercontent.com/godot-mobile-plugins/godot-notification-scheduler/main/docs/assets/demo_screenshot_android_521.png" width="243">
+</p>
+
+---
+
 <a name="installation"></a>
 
-## <img src="https://raw.githubusercontent.com/godot-sdk-integrations/godot-notification-scheduler/main/addon/icon.png" width="20"> Installation
+## <img src="https://raw.githubusercontent.com/godot-mobile-plugins/godot-notification-scheduler/main/addon/src/icon.png" width="20"> Installation
 
 **Uninstall previous versions** before installing.
 If using both Android & iOS, ensure **same addon interface version**.
@@ -58,7 +73,7 @@ If using both Android & iOS, ensure **same addon interface version**.
 
 <a name="usage"></a>
 
-## <img src="https://raw.githubusercontent.com/godot-sdk-integrations/godot-notification-scheduler/main/addon/icon.png" width="20"> Usage
+## <img src="https://raw.githubusercontent.com/godot-mobile-plugins/godot-notification-scheduler/main/addon/src/icon.png" width="20"> Usage
 
 1. Add a **NotificationScheduler** node to your scene.
 2. Connect [signals](#signals):
@@ -102,14 +117,14 @@ If using both Android & iOS, ensure **same addon interface version**.
 
 <a name="signals"></a>
 
-## <img src="https://raw.githubusercontent.com/godot-sdk-integrations/godot-notification-scheduler/main/addon/icon.png" width="20"> Signals
+## <img src="https://raw.githubusercontent.com/godot-mobile-plugins/godot-notification-scheduler/main/addon/src/icon.png" width="20"> Signals
 - `initialization_completed()`: Emitted when the plugin is initialized.
 - `post_notifications_permission_granted(permission_name: String)`: Emitted when notification permission is granted to app.
 - `post_notifications_permission_denied(permission_name: String)`: Emitted when notification permission is denied to app.
 - `notification_opened(notification_data: NotificationData)`: Emitted when user taps notification.
 - `notification_dismissed(notification_data: NotificationData)`: Emitted when user dismisses notification.
 
-### <img src="https://raw.githubusercontent.com/godot-sdk-integrations/godot-notification-scheduler/main/addon/icon.png" width="16"> Android-only Signals
+### <img src="https://raw.githubusercontent.com/godot-mobile-plugins/godot-notification-scheduler/main/addon/src/icon.png" width="16"> Android-only Signals
 - `battery_optimizations_permission_granted(permission_name: String)`: Emitted when battery optimization exemption permission is granted to app.
 - `battery_optimizations_permission_granted(permission_name: String)`: Emitted when battery optimization exemption is denied to app.
 
@@ -117,7 +132,7 @@ If using both Android & iOS, ensure **same addon interface version**.
 
 <a name="methods"></a>
 
-## <img src="https://raw.githubusercontent.com/godot-sdk-integrations/godot-notification-scheduler/main/addon/icon.png" width="20"> Methods
+## <img src="https://raw.githubusercontent.com/godot-mobile-plugins/godot-notification-scheduler/main/addon/src/icon.png" width="20"> Methods
 - `initialize()` - initialize plugin
 - `create_notification_channel(NotificationChannel)` - create a new notification channel with given data
 - `schedule(NotificationData)` - schedule a new notification with given data
@@ -127,18 +142,18 @@ If using both Android & iOS, ensure **same addon interface version**.
 - `request_post_notifications_permission()` – request permissions to post notifications from user
 - `open_app_info_settings()` - open the system settings screen for app
 
-### <img src="https://raw.githubusercontent.com/godot-sdk-integrations/godot-notification-scheduler/main/addon/icon.png" width="16"> Android-only Methods
+### <img src="https://raw.githubusercontent.com/godot-mobile-plugins/godot-notification-scheduler/main/addon/src/icon.png" width="16"> Android-only Methods
 - `is_ignoring_battery_optimizations()` – returns true if app has already been granted permissions to ignore battery optimizations
 - `request_ignore_battery_optimizations_permission()` – request permissions to ignore battery optimizations from user
 
-### <img src="https://raw.githubusercontent.com/godot-sdk-integrations/godot-notification-scheduler/main/addon/icon.png" width="16"> iOS-only Methods
+### <img src="https://raw.githubusercontent.com/godot-mobile-plugins/godot-notification-scheduler/main/addon/src/icon.png" width="16"> iOS-only Methods
 - `set_badge_count(count)` – show/hide app icon badge with count (on Android, use `NotificationData`'s `set_badge_count()` method)
 
 ---
 
 <a name="error-codes"></a>
 
-## <img src="https://raw.githubusercontent.com/godot-sdk-integrations/godot-notification-scheduler/main/addon/icon.png" width="20"> Error Codes
+## <img src="https://raw.githubusercontent.com/godot-mobile-plugins/godot-notification-scheduler/main/addon/src/icon.png" width="20"> Error Codes
 
 | Constant              | Value | Description                             |
 |-----------------------|-------|-----------------------------------------|
@@ -152,18 +167,18 @@ If using both Android & iOS, ensure **same addon interface version**.
 
 <a name="classes"></a>
 
-## <img src="https://raw.githubusercontent.com/godot-sdk-integrations/godot-notification-scheduler/main/addon/icon.png" width="20"> Classes
+## <img src="https://raw.githubusercontent.com/godot-mobile-plugins/godot-notification-scheduler/main/addon/src/icon.png" width="20"> Classes
 
-### <img src="https://raw.githubusercontent.com/godot-sdk-integrations/godot-notification-scheduler/main/addon/icon.png" width="16"> NotificationChannel
+### <img src="https://raw.githubusercontent.com/godot-mobile-plugins/godot-notification-scheduler/main/addon/src/icon.png" width="16"> NotificationChannel
 - Encapsulates data that defines the notification channel.
 - Properties: `id`, `name`, `description`, `importance`, `badge_enabled`
 
-### <img src="https://raw.githubusercontent.com/godot-sdk-integrations/godot-notification-scheduler/main/addon/icon.png" width="16"> NotificationData
+### <img src="https://raw.githubusercontent.com/godot-mobile-plugins/godot-notification-scheduler/main/addon/src/icon.png" width="16"> NotificationData
 - Encapsulates data that defines the notification.
 - Properties: `notification_id`, `channel_id`, `title`, `content`, `small_icon_name`, `large_icon_name`, `delay`, `deeplink`, `interval`, `badge_count`, `custom_data`
 - Note: `small_icon_name` and `large_icon_name` are only used on Android.
 
-### <img src="https://raw.githubusercontent.com/godot-sdk-integrations/godot-notification-scheduler/main/addon/icon.png" width="16"> CustomData
+### <img src="https://raw.githubusercontent.com/godot-mobile-plugins/godot-notification-scheduler/main/addon/src/icon.png" width="16"> CustomData
 - Encapsulates extra data to be sent and received along with other notification data.
 - Allows setting of any number of `bool`, `int`, `float`, or `String` properties.
 
@@ -171,9 +186,9 @@ If using both Android & iOS, ensure **same addon interface version**.
 
 <a name="platform-specific-notes"></a>
 
-## <img src="https://raw.githubusercontent.com/godot-sdk-integrations/godot-notification-scheduler/main/addon/icon.png" width="20"> Platform-Specific Notes
+## <img src="https://raw.githubusercontent.com/godot-mobile-plugins/godot-notification-scheduler/main/addon/src/icon.png" width="20"> Platform-Specific Notes
 
-### <img src="https://raw.githubusercontent.com/godot-sdk-integrations/godot-notification-scheduler/main/addon/icon.png" width="16"> Android
+### <img src="https://raw.githubusercontent.com/godot-mobile-plugins/godot-notification-scheduler/main/addon/src/icon.png" width="16"> Android
 - **Default icon:** `ic_default_notification` in `res://assets/NotificationSchedulerPlugin`
 - **Custom icon:**
   1. Generate via Android Studio → **Image Asset Studio** → **Notification Icons**
@@ -189,7 +204,7 @@ If using both Android & iOS, ensure **same addon interface version**.
   - No small icon error: ensure icons exist in assets directory.
   - Battery restrictions: check **Settings → Apps → Your App → Battery**.
 
-### <img src="https://raw.githubusercontent.com/godot-sdk-integrations/godot-notification-scheduler/main/addon/icon.png" width="16"> iOS
+### <img src="https://raw.githubusercontent.com/godot-mobile-plugins/godot-notification-scheduler/main/addon/src/icon.png" width="16"> iOS
 - Set notification icons in **Project → Export → iOS**.
 - System limits:
 	- Max repeating notifications: 64
@@ -201,7 +216,7 @@ If using both Android & iOS, ensure **same addon interface version**.
 
 <a name="video-tutorials"></a>
 
-# <img src="https://raw.githubusercontent.com/godot-sdk-integrations/godot-notification-scheduler/main/addon/icon.png" width="24"> Video Tutorials
+# <img src="https://raw.githubusercontent.com/godot-mobile-plugins/godot-notification-scheduler/main/addon/src/icon.png" width="24"> Video Tutorials
 
 ## **Notification Scheduler Plugin on Android** -- _by [Code Artist](https://www.youtube.com/@codeartist1687)_
 [![Notification Scheduler Plugin on Android](https://img.youtube.com/vi/QKN5enW2640/0.jpg)](https://youtu.be/QKN5enW2640)
@@ -210,7 +225,7 @@ If using both Android & iOS, ensure **same addon interface version**.
 
 <a name="links"></a>
 
-# <img src="https://raw.githubusercontent.com/godot-sdk-integrations/godot-notification-scheduler/main/addon/icon.png" width="20"> Links
+# <img src="https://raw.githubusercontent.com/godot-mobile-plugins/godot-notification-scheduler/main/addon/src/icon.png" width="20"> Links
 
 - [AssetLib Entry Android](https://godotengine.org/asset-library/asset/2547)
 - [AssetLib Entry iOS](https://godotengine.org/asset-library/asset/3186)
@@ -219,32 +234,34 @@ If using both Android & iOS, ensure **same addon interface version**.
 
 <a name="all-plugins"></a>
 
-# <img src="https://raw.githubusercontent.com/godot-sdk-integrations/godot-notification-scheduler/main/addon/icon.png" width="24"> All Plugins
+# <img src="https://raw.githubusercontent.com/godot-mobile-plugins/godot-notification-scheduler/main/addon/src/icon.png" width="24"> All Plugins
 
 | Plugin | Android | iOS | Free | Open Source | License |
 | :--- | :---: | :---: | :---: | :---: | :---: |
-| [Notification Scheduler](https://github.com/godot-sdk-integrations/godot-notification-scheduler) | ✅ | ✅ | ✅ | ✅ | MIT |
 | [Admob](https://github.com/godot-sdk-integrations/godot-admob) | ✅ | ✅ | ✅ | ✅ | MIT |
-| [Deeplink](https://github.com/godot-sdk-integrations/godot-deeplink) | ✅ | ✅ | ✅ | ✅ | MIT |
-| [Share](https://github.com/godot-sdk-integrations/godot-share) | ✅ | ✅ | ✅ | ✅ | MIT |
-| [In-App Review](https://github.com/godot-sdk-integrations/godot-inapp-review) | ✅ | ✅ | ✅ | ✅ | MIT |
-| [Connection State](https://github.com/godot-sdk-integrations/godot-connection-state) | ✅ | ✅ | ✅ | ✅ | MIT |
-| [OAuth 2.0](https://github.com/godot-sdk-integrations/godot-oauth2) | ✅ | ✅ | ✅ | ✅ | MIT |
+| [Notification Scheduler](https://github.com/godot-mobile-plugins/godot-notification-scheduler) | ✅ | ✅ | ✅ | ✅ | MIT |
+| [Deeplink](https://github.com/godot-mobile-plugins/godot-deeplink) | ✅ | ✅ | ✅ | ✅ | MIT |
+| [Share](https://github.com/godot-mobile-plugins/godot-share) | ✅ | ✅ | ✅ | ✅ | MIT |
+| [In-App Review](https://github.com/godot-mobile-plugins/godot-inapp-review) | ✅ | ✅ | ✅ | ✅ | MIT |
+| [Native Camera](https://github.com/godot-mobile-plugins/godot-native-camera) | ✅ | ✅ | ✅ | ✅ | MIT |
+| [Connection State](https://github.com/godot-mobile-plugins/godot-connection-state) | ✅ | ✅ | ✅ | ✅ | MIT |
+| [OAuth 2.0](https://github.com/godot-mobile-plugins/godot-oauth2) | ✅ | ✅ | ✅ | ✅ | MIT |
+| [QR](https://github.com/godot-mobile-plugins/godot-qr) | ✅ | ✅ | ✅ | ✅ | MIT |
 
 ---
 
 <a name="credits"></a>
 
-# <img src="https://raw.githubusercontent.com/godot-sdk-integrations/godot-notification-scheduler/main/addon/icon.png" width="24"> Credits
+# <img src="https://raw.githubusercontent.com/godot-mobile-plugins/godot-notification-scheduler/main/addon/src/icon.png" width="24"> Credits
 
 - Developed by [Cengiz](https://github.com/cengiz-pz)
-- iOS part based on [Godot iOS Plugin Template](https://github.com/cengiz-pz/godot-ios-plugin-template)
-- Original: [Godot Notification Scheduler](https://github.com/godot-sdk-integrations/godot-notification-scheduler)
+- Based on [Godot Mobile Plugin Template](https://github.com/godot-mobile-plugins/godot-plugin-template)
+- Original: [Godot Notification Scheduler](https://github.com/godot-mobile-plugins/godot-notification-scheduler)
 
 ---
 
 <a name="contributing"></a>
 
-# <img src="https://raw.githubusercontent.com/godot-sdk-integrations/godot-notification-scheduler/main/addon/icon.png" width="24"> Contributing
+# <img src="https://raw.githubusercontent.com/godot-mobile-plugins/godot-notification-scheduler/main/addon/src/icon.png" width="24"> Contributing
 
-See [our guide](https://github.com/godot-sdk-integrations/godot-notification-scheduler?tab=contributing-ov-file) if you would like to contribute to this project.
+See [our guide](https://github.com/godot-mobile-plugins/godot-notification-scheduler?tab=contributing-ov-file) if you would like to contribute to this project.

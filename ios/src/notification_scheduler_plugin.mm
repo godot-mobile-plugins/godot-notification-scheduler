@@ -8,7 +8,7 @@
 
 #include "core/config/project_settings.h"
 #include "core/error/error_macros.h"
-#import "notification_scheduler_plugin_implementation.h"
+#import "notification_scheduler_plugin.h"
 #import "nsp_converter.h"
 #import "channel_data.h"
 

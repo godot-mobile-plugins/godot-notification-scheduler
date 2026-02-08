@@ -3,7 +3,7 @@
 [ext_resource type="Script" uid="uid://bd23rk21snlwn" path="res://Main.gd" id="1_r6ksj"]
 [ext_resource type="Texture2D" uid="uid://b11m8fw2showh" path="res://assets/notification-scheduler-android.png" id="2_7rmrj"]
 [ext_resource type="Texture2D" uid="uid://bvfau1jubfqcm" path="res://assets/notification-scheduler-ios.png" id="3_cm0pq"]
-[ext_resource type="Script" uid="uid://dksl1q3dxc2a2" path="res://addons/NotificationSchedulerPlugin/NotificationScheduler.gd" id="3_guixi"]
+[ext_resource type="Script" uid="uid://1fqgudwq6u32" path="res://addons/NotificationSchedulerPlugin/NotificationScheduler.gd" id="3_guixi"]
 
 [node name="Main" type="Node"]
 script = ExtResource("1_r6ksj")

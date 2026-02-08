@@ -8,7 +8,9 @@ body:
     label: Is there an existing issue for this?
     description: Please search to see if an issue already exists for the bug you encountered.
     options:
-    - label: I have searched the existing issues
+    - label: I have searched the existing open and closed issues
+      required: true
+    - label: I have searched the existing discussions
       required: true
 - type: textarea
   attributes:
@@ -39,13 +41,12 @@ body:
     label: Godot Version
     description: What version of Godot are you running?
     options:
-      - 4.3.stable
-      - 4.4.1.stable
       - 4.5.stable
       - 4.5.1.stable
+      - 4.6.stable
       - 4.x
       - Other
-    default: 3
+    default: 2
   validations:
     required: true
 - type: dropdown
@@ -75,8 +76,9 @@ body:
     options:
       - "5.0"
       - "5.1"
+      - "5.2"
       - Other
-    default: 1
+    default: 2
   validations:
     required: true
 - type: dropdown
@@ -91,10 +93,9 @@ body:
       - Android 16
       - Android (other)
       - iOS 18.x
-      - iOS 18.5
       - iOS 26.x
       - iOS (other)
-    default: 2
+    default: 3
   validations:
     required: true
 - type: textarea

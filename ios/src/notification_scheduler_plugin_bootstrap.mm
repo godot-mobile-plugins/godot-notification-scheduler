@@ -3,8 +3,8 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "notification_scheduler_plugin_bootstrap.h"
 #import "notification_scheduler_plugin.h"
-#import "notification_scheduler_plugin_implementation.h"
 #import "core/config/engine.h"
 
 NotificationSchedulerPlugin *notification_scheduler_plugin;

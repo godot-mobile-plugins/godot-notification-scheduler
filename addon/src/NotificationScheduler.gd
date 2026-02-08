@@ -3,6 +3,7 @@
 #
 
 @tool
+@icon("icon.png")
 class_name NotificationScheduler extends Node
 
 signal initialization_completed()
