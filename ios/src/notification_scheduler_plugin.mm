@@ -19,6 +19,8 @@ String const POST_NOTIFICATIONS_PERMISSION_GRANTED_SIGNAL = "post_notifications_
 String const POST_NOTIFICATIONS_PERMISSION_DENIED_SIGNAL = "post_notifications_permission_denied";
 String const BATTERY_OPTIMIZATIONS_PERMISSION_GRANTED_SIGNAL = "battery_optimizations_permission_granted";
 String const BATTERY_OPTIMIZATIONS_PERMISSION_DENIED_SIGNAL = "battery_optimizations_permission_denied";
+String const SCHEDULE_EXACT_ALARM_PERMISSION_GRANTED_SIGNAL = "schedule_exact_alarm_permission_granted";
+String const SCHEDULE_EXACT_ALARM_PERMISSION_DENIED_SIGNAL = "schedule_exact_alarm_permission_denied";
 
 NotificationSchedulerPlugin* NotificationSchedulerPlugin::instance = NULL;
 
@@ -34,6 +36,8 @@ void NotificationSchedulerPlugin::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("open_app_info_settings"), &NotificationSchedulerPlugin::open_app_info_settings);
 	ClassDB::bind_method(D_METHOD("is_ignoring_battery_optimizations"), &NotificationSchedulerPlugin::is_ignoring_battery_optimizations);
 	ClassDB::bind_method(D_METHOD("request_ignore_battery_optimizations_permission"), &NotificationSchedulerPlugin::request_ignore_battery_optimizations_permission);
+	ClassDB::bind_method(D_METHOD("has_exact_alarm_permission"), &NotificationSchedulerPlugin::has_exact_alarm_permission);
+	ClassDB::bind_method(D_METHOD("request_exact_alarm_permission"), &NotificationSchedulerPlugin::request_exact_alarm_permission);
 
 	ADD_SIGNAL(MethodInfo(INITIALIZATION_COMPLETED));
 	ADD_SIGNAL(MethodInfo(NOTIFICATION_OPENED_SIGNAL, PropertyInfo(Variant::DICTIONARY, "notification_data")));
@@ -42,6 +46,8 @@ void NotificationSchedulerPlugin::_bind_methods() {
 	ADD_SIGNAL(MethodInfo(POST_NOTIFICATIONS_PERMISSION_DENIED_SIGNAL, PropertyInfo(Variant::STRING, "permission_name")));
 	ADD_SIGNAL(MethodInfo(BATTERY_OPTIMIZATIONS_PERMISSION_GRANTED_SIGNAL, PropertyInfo(Variant::STRING, "permission_name")));
 	ADD_SIGNAL(MethodInfo(BATTERY_OPTIMIZATIONS_PERMISSION_DENIED_SIGNAL, PropertyInfo(Variant::STRING, "permission_name")));
+	ADD_SIGNAL(MethodInfo(SCHEDULE_EXACT_ALARM_PERMISSION_GRANTED_SIGNAL, PropertyInfo(Variant::STRING, "permission_name")));
+	ADD_SIGNAL(MethodInfo(SCHEDULE_EXACT_ALARM_PERMISSION_DENIED_SIGNAL, PropertyInfo(Variant::STRING, "permission_name")));
 }
 
 Error NotificationSchedulerPlugin::initialize() {
@@ -172,9 +178,27 @@ Error NotificationSchedulerPlugin::request_ignore_battery_optimizations_permissi
 		return ERR_UNCONFIGURED;
 	}
 	NSLog(@"NotificationSchedulerPlugin: request_ignore_battery_optimizations_permission() method is not supported on iOS");
-	UNUserNotificationCenter* center = [UNUserNotificationCenter currentNotificationCenter];
 	this->call_deferred("emit_signal", BATTERY_OPTIMIZATIONS_PERMISSION_GRANTED_SIGNAL,
 			"request_ignore_battery_optimizations_permission");
+	return OK;
+}
+
+bool NotificationSchedulerPlugin::has_exact_alarm_permission() {
+	if (!is_initialized) {
+		NSLog(@"NotificationSchedulerPlugin: ERROR: Plugin not initialized");
+		return false;
+	}
+	NSLog(@"NotificationSchedulerPlugin: has_exact_alarm_permission() method is not supported on iOS");
+	return true;
+}
+
+Error NotificationSchedulerPlugin::request_exact_alarm_permission() {
+	if (!is_initialized) {
+		NSLog(@"NotificationSchedulerPlugin: ERROR: Plugin not initialized");
+		return ERR_UNCONFIGURED;
+	}
+	NSLog(@"NotificationSchedulerPlugin: request_exact_alarm_permission() method is not supported on iOS");
+	this->call_deferred("emit_signal", SCHEDULE_EXACT_ALARM_PERMISSION_GRANTED_SIGNAL, "request_exact_alarm_permission");
 	return OK;
 }
 

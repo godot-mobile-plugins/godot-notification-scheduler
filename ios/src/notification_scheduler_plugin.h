@@ -18,6 +18,8 @@ extern String const POST_NOTIFICATIONS_PERMISSION_GRANTED_SIGNAL;
 extern String const POST_NOTIFICATIONS_PERMISSION_DENIED_SIGNAL;
 extern String const BATTERY_OPTIMIZATIONS_PERMISSION_GRANTED_SIGNAL;
 extern String const BATTERY_OPTIMIZATIONS_PERMISSION_DENIED_SIGNAL;
+extern String const SCHEDULE_EXACT_ALARM_PERMISSION_GRANTED_SIGNAL;
+extern String const SCHEDULE_EXACT_ALARM_PERMISSION_DENIED_SIGNAL;
 
 class NotificationSchedulerPlugin : public Object {
 	GDCLASS(NotificationSchedulerPlugin, Object);
@@ -45,6 +47,8 @@ public:
 	Error request_post_notifications_permission();
 	bool is_ignoring_battery_optimizations();
 	Error request_ignore_battery_optimizations_permission();
+	bool has_exact_alarm_permission();
+	Error request_exact_alarm_permission();
 	Error create_notification_channel(Dictionary dict);
 	Error schedule(Dictionary notificationData);
 	Error cancel(int notificationId);

@@ -127,6 +127,8 @@ If using both Android & iOS, ensure **same addon interface version**.
 ### <img src="https://raw.githubusercontent.com/godot-mobile-plugins/godot-notification-scheduler/main/addon/src/icon.png" width="16"> Android-only Signals
 - `battery_optimizations_permission_granted(permission_name: String)`: Emitted when battery optimization exemption permission is granted to app.
 - `battery_optimizations_permission_granted(permission_name: String)`: Emitted when battery optimization exemption is denied to app.
+- `schedule_exact_alarm_permission_granted(permission_name: String)`: Emitted when permission to schedule exact alarms is granted to app.
+- `schedule_exact_alarm_permission_denied(permission_name: String)`: Emitted when permission to schedule exact alarms is denied to app.
 
 ---
 
@@ -145,6 +147,8 @@ If using both Android & iOS, ensure **same addon interface version**.
 ### <img src="https://raw.githubusercontent.com/godot-mobile-plugins/godot-notification-scheduler/main/addon/src/icon.png" width="16"> Android-only Methods
 - `is_ignoring_battery_optimizations()` – returns true if app has already been granted permissions to ignore battery optimizations
 - `request_ignore_battery_optimizations_permission()` – request permissions to ignore battery optimizations from user
+- `has_exact_alarm_permission()` – returns true if app has already been granted permission to schedule exact alarms
+- `request_exact_alarm_permission()` – request permission to schedule exact alarms rom user
 
 ### <img src="https://raw.githubusercontent.com/godot-mobile-plugins/godot-notification-scheduler/main/addon/src/icon.png" width="16"> iOS-only Methods
 - `set_badge_count(count)` – show/hide app icon badge with count (on Android, use `NotificationData`'s `set_badge_count()` method)
@@ -157,10 +161,10 @@ If using both Android & iOS, ensure **same addon interface version**.
 
 | Constant              | Value | Description                             |
 |-----------------------|-------|-----------------------------------------|
-| `ERR_ALREADY_EXISTS`  | `1`   | Channel ID already exists               |
-| `ERR_INVALID_DATA`    | `2`   | Invalid notification/channel data       |
-| `ERR_UNAVAILABLE`     | `3`   | Not supported on current platform       |
-| `ERR_UNCONFIGURED`    | `4`   | Plugin not initialized                  |
+| `ERR_ALREADY_EXISTS`  | `32`  | Channel ID already exists               |
+| `ERR_INVALID_DATA`    | `30`  | Invalid notification/channel data       |
+| `ERR_UNAVAILABLE`     | `2`   | Not supported on current platform       |
+| `ERR_UNCONFIGURED`    | `3`   | Plugin not initialized                  |
 | `OK`                  | `0`   | Success                                 |
 
 ---
@@ -191,18 +195,21 @@ If using both Android & iOS, ensure **same addon interface version**.
 ### <img src="https://raw.githubusercontent.com/godot-mobile-plugins/godot-notification-scheduler/main/addon/src/icon.png" width="16"> Android
 - **Default icon:** `ic_default_notification` in `res://assets/NotificationSchedulerPlugin`
 - **Custom icon:**
-  1. Generate via Android Studio → **Image Asset Studio** → **Notification Icons**
-  2. Copy generated drawables into `res://assets/NotificationSchedulerPlugin`
-  3. Use `set_small_icon_name("icon_name")`
+	1. Generate via Android Studio → **Image Asset Studio** → **Notification Icons**
+	2. Copy generated drawables into `res://assets/NotificationSchedulerPlugin`
+	3. Use `set_small_icon_name("icon_name")`
 - **App Optimization:**
-  - Check app optimization settings
-  - If app settings are set to `Optimized` or `Restricted`, notifications may not be delivered when app is not running
+	- Check app optimization settings
+	- If app settings are set to `Optimized` or `Restricted`, notifications may not be delivered when app is not running
 - **MIUI:**
-  - `request_post_notifications_permission()` may not work reliably on Xiaomi devices to fully exempt an app from **MIUI**'s custom battery management features.
+	- `request_post_notifications_permission()` may not work reliably on Xiaomi devices to fully exempt an app from **MIUI**'s custom battery management features.
+- **App Optimization and Exact Alarm:**
+	- The plugin will schedule an exact alarm to deliver the notification if the `SCHEDULE_EXACT_ALARM` permission has been granted, else the plugin will fall back to non-exact scheduling.
+	- Obtaining the `IGNORE_BATTERY_OPTIMIZATIONS` permission will also allow scheduling of exact alarms - additionally requesting `SCHEDULE_EXACT_ALARM` permission is not necessary.
 - **Troubleshooting:**
-  - Logs: `adb logcat | grep 'godot'` (Linux), `adb.exe logcat | select-string "godot"` (Windows)
-  - No small icon error: ensure icons exist in assets directory.
-  - Battery restrictions: check **Settings → Apps → Your App → Battery**.
+	- Logs: `adb logcat | grep 'godot'` (Linux), `adb.exe logcat | select-string "godot"` (Windows)
+	- No small icon error: ensure icons exist in assets directory.
+	- Battery restrictions: check **Settings → Apps → Your App → Battery**.
 
 ### <img src="https://raw.githubusercontent.com/godot-mobile-plugins/godot-notification-scheduler/main/addon/src/icon.png" width="16"> iOS
 - Set notification icons in **Project → Export → iOS**.

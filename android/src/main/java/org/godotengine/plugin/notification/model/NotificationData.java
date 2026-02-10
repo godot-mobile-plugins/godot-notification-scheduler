@@ -172,7 +172,7 @@ public class NotificationData {
 	}
 
 	public Integer getId() {
-		return (Integer) data.get(DATA_KEY_ID);
+		return toInteger(data.get(DATA_KEY_ID));
 	}
 
 	public String getChannelId() {
@@ -203,7 +203,7 @@ public class NotificationData {
 	 * How many seconds from now to schedule first notification
 	 */
 	public Integer getDelay() {
-		return (Integer) data.get(DATA_KEY_DELAY);
+		return toInteger(data.get(DATA_KEY_DELAY));
 	}
 
 	public boolean hasDeeplink() {
@@ -225,7 +225,7 @@ public class NotificationData {
 	 * Interval in seconds between each repeating notification
 	 */
 	public Integer getInterval() {
-		return (Integer) data.get(DATA_KEY_INTERVAL);
+		return toInteger(data.get(DATA_KEY_INTERVAL));
 	}
 
 	public boolean hasBadgeCount() {
@@ -233,7 +233,27 @@ public class NotificationData {
 	}
 
 	public Integer getBadgeCount() {
-		return (data.containsKey(DATA_KEY_BADGE_COUNT)) ? (Integer) data.get(DATA_KEY_BADGE_COUNT) : (Integer) 0;
+		return (data.containsKey(DATA_KEY_BADGE_COUNT)) ? toInteger(data.get(DATA_KEY_BADGE_COUNT)) : 0;
+	}
+	
+	/**
+	 * Safely convert Object to Integer, handling both Integer and Long types
+	 */
+	private Integer toInteger(Object value) {
+		if (value == null) {
+			return null;
+		}
+		if (value instanceof Integer) {
+			return (Integer) value;
+		}
+		if (value instanceof Long) {
+			return ((Long) value).intValue();
+		}
+		if (value instanceof Number) {
+			return ((Number) value).intValue();
+		}
+		Log.w(LOG_TAG, "Unexpected numeric type: " + value.getClass().getName());
+		return null;
 	}
 
 	public boolean hasCustomData() {

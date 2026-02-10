@@ -62,16 +62,21 @@ public class NotificationSchedulerPlugin extends GodotPlugin {
 	private static final SignalInfo POST_NOTIFICATIONS_PERMISSION_DENIED_SIGNAL = new SignalInfo("post_notifications_permission_denied", String.class);
 	private static final SignalInfo BATTERY_OPTIMIZATIONS_PERMISSION_GRANTED_SIGNAL = new SignalInfo("battery_optimizations_permission_granted", String.class);
 	private static final SignalInfo BATTERY_OPTIMIZATIONS_PERMISSION_DENIED_SIGNAL = new SignalInfo("battery_optimizations_permission_denied", String.class);
+	private static final SignalInfo SCHEDULE_EXACT_ALARM_PERMISSION_GRANTED_SIGNAL = new SignalInfo("schedule_exact_alarm_permission_granted", String.class);
+	private static final SignalInfo SCHEDULE_EXACT_ALARM_PERMISSION_DENIED_SIGNAL = new SignalInfo("schedule_exact_alarm_permission_denied", String.class);
+	
 	private static final SignalInfo NOTIFICATION_OPENED_SIGNAL = new SignalInfo("notification_opened", Dictionary.class);
 	private static final SignalInfo NOTIFICATION_DISMISSED_SIGNAL = new SignalInfo("notification_dismissed", Dictionary.class);
 
-	private static final String PREF_NAME = CLASS_NAME + "_prefs";
+	public static final String PREF_NAME = CLASS_NAME + "_prefs";
 	private static final String KEY_PENDING_DISMISSED = "pending_dismissed_ids";
 	private static final String KEY_SCHEDULED_NOTIFICATIONS = "scheduled_notifications";
-	private static final String DATA_KEY_FIRE_TIME = "fire_time_ms"; // Internal key for absolute time
+	public static final String KEY_SAVED_CHANNELS = "saved_channels"; // New key for channel persistence
+	private static final String DATA_KEY_FIRE_TIME = "fire_time_ms"; 
 
 	private static final int POST_NOTIFICATIONS_PERMISSION_REQUEST_CODE = 11803;
 	private static final int BATTERY_OPTIMIZATIONS_PERMISSION_REQUEST_CODE = 11804;
+	private static final int SCHEDULE_EXACT_ALARM_PERMISSION_REQUEST_CODE = 11805;
 
 	private static final List<NotificationData> pendingOpenedNotifications = new ArrayList<>();
 
@@ -117,24 +122,42 @@ public class NotificationSchedulerPlugin extends GodotPlugin {
 
 			// Check if channel already exists
 			if (manager.getNotificationChannel(channelData.getId()) == null) {
-				NotificationChannel channel = new NotificationChannel(channelData.getId(), channelData.getName(),
-						channelData.getImportance());
-				channel.setDescription(channelData.getDescription());
-				channel.setShowBadge(channelData.getBadgeEnabled());
-				manager.createNotificationChannel(channel);
+				manager.createNotificationChannel(channelData.toNotificationChannel());
 				Log.d(LOG_TAG, String.format("%s():: channel id: %s, name: %s, description: %s",
 						"create_notification_channel", channelData.getId(), channelData.getName(), channelData.getDescription()));
 			} else {
 				Log.d(LOG_TAG, String.format("%s():: channel id: %s already exists",
 						"create_notification_channel", channelData.getId()));
+				// Proceed to save it anyway to ensure persistence is up to date
+				saveChannelData(activity, channelData);
+
 				return Error.ERR_ALREADY_EXISTS.toNativeValue();
 			}
+
+			// Persist channel data for the receiver process
+			saveChannelData(activity, channelData);
 		} else {
 			Log.e(LOG_TAG, "create_notification_channel(): invalid channel data object");
 			return Error.ERR_INVALID_DATA.toNativeValue();
 		}
 
 		return Error.OK.toNativeValue();
+	}
+
+	/**
+	 * Saves channel data to SharedPreferences so the Receiver can recreate it if needed.
+	 */
+	private void saveChannelData(Context context, ChannelData channelData) {
+		try {
+			SharedPreferences channelsPrefs = context.getSharedPreferences(KEY_SAVED_CHANNELS, Context.MODE_PRIVATE);
+			
+			JSONObject json = channelData.toJson();
+
+			channelsPrefs.edit().putString(channelData.getId(), json.toString()).apply();
+			Log.d(LOG_TAG, "Persisted channel data for: " + channelData.getId());
+		} catch (JSONException e) {
+			Log.e(LOG_TAG, "Failed to persist channel data: " + e.getMessage());
+		}
 	}
 
 	/**
@@ -150,12 +173,27 @@ public class NotificationSchedulerPlugin extends GodotPlugin {
 			return Error.ERR_UNCONFIGURED.toNativeValue();
 		}
 
+		// Check POST_NOTIFICATIONS permission on Android 13+
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+			if (ActivityCompat.checkSelfPermission(activity, Manifest.permission.POST_NOTIFICATIONS) 
+					!= PackageManager.PERMISSION_GRANTED) {
+				Log.e(LOG_TAG, "schedule(): POST_NOTIFICATIONS permission not granted!");
+				return Error.ERR_UNAUTHORIZED.toNativeValue();
+			}
+		}
+
 		NotificationData notificationData = new NotificationData(data);
-		Log.d(LOG_TAG, "schedule():: notification id: " + notificationData.getId());
+		Log.i(LOG_TAG, "Scheduling notification " + notificationData.getId() + 
+				" with a delay of " + notificationData.getDelay() + " seconds" +
+				(notificationData.hasBadgeCount() ? " (badge count: " + notificationData.getBadgeCount() + ")" : ""));
 
 		if (notificationData.isValid()) {
 			// Calculate absolute fire time for persistence
 			long fireTime = calculateTimeAfterDelay(notificationData.getDelay());
+			long currentTime = System.currentTimeMillis();
+			
+			Log.i(LOG_TAG, "Current time: " + currentTime + ", Fire time: " + fireTime + 
+					", Delay ms: " + (fireTime - currentTime));
 			
 			// Persist the notification data
 			saveScheduledNotification(activity, notificationData, fireTime);
@@ -220,9 +258,8 @@ public class NotificationSchedulerPlugin extends GodotPlugin {
 		}
 
 		int notificationId = defaultValue;
-		Activity activity = getActivity();
 		if (activity != null) {
-			Intent intent = getActivity().getIntent();
+			Intent intent = activity.getIntent();
 			if (intent.hasExtra(NotificationData.DATA_KEY_ID)) {
 				notificationId = intent.getIntExtra(NotificationData.DATA_KEY_ID, defaultValue);
 				Log.i(LOG_TAG, "get_notification_id():: intent with notification id: " + notificationId);
@@ -242,17 +279,10 @@ public class NotificationSchedulerPlugin extends GodotPlugin {
 			Log.e(LOG_TAG, "has_post_notifications_permission(): plugin is not initialized!");
 			return false;
 		}
-
-		boolean result = false;
 		if (Build.VERSION.SDK_INT > Build.VERSION_CODES.S_V2) {
-			if (NotificationManagerCompat.from(activity.getApplicationContext()).areNotificationsEnabled()) {
-				result = true;
-			}
-		} else {
-			result = true;
-			Log.d(LOG_TAG, "has_post_notifications_permission():: API level is " + Build.VERSION.SDK_INT);
+			return NotificationManagerCompat.from(activity.getApplicationContext()).areNotificationsEnabled();
 		}
-		return result;
+		return true;
 	}
 
 	/**
@@ -333,6 +363,44 @@ public class NotificationSchedulerPlugin extends GodotPlugin {
 	}
 
 	/**
+	 * Check if exact alarm permission is granted (required for Android 12+)
+	 */
+	@UsedByGodot
+	public boolean has_exact_alarm_permission() {
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+			AlarmManager alarmManager = (AlarmManager) activity.getSystemService(ALARM_SERVICE);
+			return alarmManager.canScheduleExactAlarms();
+		}
+		return true; // Not required on older versions
+	}
+
+	/**
+	 * Request exact alarm permission (Android 12+)
+	 */
+	@UsedByGodot
+	public int request_exact_alarm_permission() {
+		if (!isInitialized) {
+			Log.e(LOG_TAG, "request_exact_alarm_permission(): plugin is not initialized!");
+			return Error.ERR_UNCONFIGURED.toNativeValue();
+		}
+
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+			AlarmManager alarmManager = (AlarmManager) activity.getSystemService(ALARM_SERVICE);
+			if (!alarmManager.canScheduleExactAlarms()) {
+				Intent intent = new Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM);
+				intent.setData(Uri.parse("package:" + activity.getPackageName()));
+
+				activity.startActivityForResult(intent, SCHEDULE_EXACT_ALARM_PERMISSION_REQUEST_CODE);
+			} else {
+				// Already granted
+				emitSignal(getGodot(), getPluginName(), SCHEDULE_EXACT_ALARM_PERMISSION_GRANTED_SIGNAL, Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM);
+			}
+		}
+
+		return Error.OK.toNativeValue();
+	}
+
+	/**
 	 * Opens APP INFO settings screen
 	 */
 	@UsedByGodot
@@ -341,8 +409,6 @@ public class NotificationSchedulerPlugin extends GodotPlugin {
 			Log.e(LOG_TAG, "open_app_info_settings(): plugin is not initialized!");
 			return Error.ERR_UNCONFIGURED.toNativeValue();
 		}
-
-		Log.d(LOG_TAG, "open_app_info_settings()");
 
 		try {
 			Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
@@ -374,6 +440,8 @@ public class NotificationSchedulerPlugin extends GodotPlugin {
 		signals.add(POST_NOTIFICATIONS_PERMISSION_DENIED_SIGNAL);
 		signals.add(BATTERY_OPTIMIZATIONS_PERMISSION_GRANTED_SIGNAL);
 		signals.add(BATTERY_OPTIMIZATIONS_PERMISSION_DENIED_SIGNAL);
+		signals.add(SCHEDULE_EXACT_ALARM_PERMISSION_GRANTED_SIGNAL);
+		signals.add(SCHEDULE_EXACT_ALARM_PERMISSION_DENIED_SIGNAL);
 		return signals;
 	}
 
@@ -425,9 +493,6 @@ public class NotificationSchedulerPlugin extends GodotPlugin {
 
 						// Mark ID as processed
 						processedNotificationIds.add(dismissedData.getId()); 
-						
-						Log.i(LOG_TAG, "Emitted signal for stored dismissed ID: " + dismissedData.getId());
-						
 					} catch (JSONException e) {
 						Log.e(LOG_TAG, "Failed to parse stored JSON for dismissed notification.", e);
 					}
@@ -482,6 +547,21 @@ public class NotificationSchedulerPlugin extends GodotPlugin {
 						Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS);
 			}
 		}
+		// Handle return from Schedule Exact Alarm settings
+		else if (requestCode == SCHEDULE_EXACT_ALARM_PERMISSION_REQUEST_CODE) {
+			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+				AlarmManager alarmManager = (AlarmManager) activity.getSystemService(ALARM_SERVICE);
+				if (alarmManager.canScheduleExactAlarms()) {
+					Log.d(LOG_TAG, "onMainActivityResult():: schedule exact alarm permission granted");
+					emitSignal(getGodot(), getPluginName(), SCHEDULE_EXACT_ALARM_PERMISSION_GRANTED_SIGNAL, 
+							Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM);
+				} else {
+					Log.d(LOG_TAG, "onMainActivityResult():: schedule exact alarm permission denied");
+					emitSignal(getGodot(), getPluginName(), SCHEDULE_EXACT_ALARM_PERMISSION_DENIED_SIGNAL, 
+							Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM);
+				}
+			}
+		}
 	}
 
 	@Override
@@ -499,8 +579,6 @@ public class NotificationSchedulerPlugin extends GodotPlugin {
 					emitSignal(getGodot(), getPluginName(), POST_NOTIFICATIONS_PERMISSION_DENIED_SIGNAL, Manifest.permission.POST_NOTIFICATIONS);
 				}
 			}
-		} else {
-			Log.e(LOG_TAG, "onMainRequestPermissionsResult():: can't check permission result, because SDK version is " + Build.VERSION.SDK_INT);
 		}
 	}
 
@@ -511,7 +589,6 @@ public class NotificationSchedulerPlugin extends GodotPlugin {
 			// Mark as processed so we don't handle it again from the Intent
 			processedNotificationIds.add(notificationData.getId());
 		} else {
-			// Plugin not ready, queue it
 			Log.i(LOG_TAG, "handleNotificationOpened():: Plugin not ready, queueing event ID: " + notificationData.getId());
 			pendingOpenedNotifications.add(notificationData);
 		}
@@ -521,7 +598,6 @@ public class NotificationSchedulerPlugin extends GodotPlugin {
 		if (instance != null) {
 			instance.emitSignal(instance.getGodot(), instance.getPluginName(), NOTIFICATION_DISMISSED_SIGNAL, notificationData.getRawData());
 		} else {
-			// App is not running or not ready. Persist the full object to disk.
 			Log.i(LOG_TAG, "Plugin not ready. Persisting full dismissed data for ID: " + notificationData.getId());
 			saveDismissedDataToPrefs(context, notificationData);
 		}
@@ -532,19 +608,10 @@ public class NotificationSchedulerPlugin extends GodotPlugin {
 	 */
 	private static void saveScheduledNotification(Context context, NotificationData data, long fireTime) {
 		try {
-			SharedPreferences prefs = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
-			JSONObject json = new JSONObject(data.getRawData());
-			
-			// Inject the absolute fire time into the JSON so we know when it was supposed to fire
-			json.put(DATA_KEY_FIRE_TIME, fireTime);
-
-			String jsonString = json.toString();
-			
-			// Store in a separate shared prefs map: key=ID, value=JSON
 			SharedPreferences schedulePrefs = context.getSharedPreferences(KEY_SCHEDULED_NOTIFICATIONS, Context.MODE_PRIVATE);
-			schedulePrefs.edit().putString(String.valueOf(data.getId()), jsonString).apply();
-			
-			Log.d(LOG_TAG, "Persisted notification " + data.getId() + " for reboot handling.");
+			JSONObject json = new JSONObject(data.getRawData());
+			json.put(DATA_KEY_FIRE_TIME, fireTime);
+			schedulePrefs.edit().putString(String.valueOf(data.getId()), json.toString()).apply();
 		} catch (JSONException e) {
 			Log.e(LOG_TAG, "Failed to save scheduled notification: " + e.getMessage());
 		}
@@ -595,15 +662,10 @@ public class NotificationSchedulerPlugin extends GodotPlugin {
 				} else {
 					// Check if the time has already passed for a one-time notification
 					if (System.currentTimeMillis() > fireTime) {
-						Log.w(LOG_TAG, "Notification " + data.getId() + " expired while device was off. Firing immediately.");
-						// Standard behavior for missed alarms is to fire immediately or discard. 
-						// setExact/set calls with past time usually trigger immediately.
+						Log.w(LOG_TAG, "Notification " + data.getId() + " expired while device was off.");
 					}
 					scheduleNotification(context, data, fireTime);
 				}
-
-				Log.i(LOG_TAG, "Restored notification: " + data.getId());
-
 			} catch (Exception e) {
 				Log.e(LOG_TAG, "Failed to restore notification: " + e.getMessage());
 			}
@@ -651,14 +713,35 @@ public class NotificationSchedulerPlugin extends GodotPlugin {
 		PendingIntent pendingIntent = PendingIntent.getBroadcast(context, notificationId, intent,
 						PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
 
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-			alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, fireTime, pendingIntent);
-		} else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-			alarmManager.setExact(AlarmManager.RTC_WAKEUP, fireTime, pendingIntent);
-		} else {
-			alarmManager.set(AlarmManager.RTC_WAKEUP, fireTime, pendingIntent);
+		try {
+			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+				// Android 12+ (API 31)
+				if (alarmManager.canScheduleExactAlarms()) {
+					alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, fireTime, pendingIntent);
+					Log.i(LOG_TAG, "Scheduled exact alarm (API 31+) for notification " + notificationId + 
+							" at " + fireTime);
+				} else {
+					// Fallback to inexact alarm if permission is missing
+					alarmManager.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, fireTime, pendingIntent);
+					Log.i(LOG_TAG, "Scheduled inexact alarm (Permission missing) for notification " + notificationId + 
+							" at " + fireTime);
+				}
+			} else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+				alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, fireTime, pendingIntent);
+				Log.i(LOG_TAG, "Scheduled exact alarm (API 23+) for notification " + notificationId + 
+						" at " + fireTime);
+			} else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+				alarmManager.setExact(AlarmManager.RTC_WAKEUP, fireTime, pendingIntent);
+				Log.i(LOG_TAG, "Scheduled exact alarm (API 19+) for notification " + notificationId + 
+						" at " + fireTime);
+			} else {
+				alarmManager.set(AlarmManager.RTC_WAKEUP, fireTime, pendingIntent);
+				Log.i(LOG_TAG, "Scheduled alarm (legacy) for notification " + notificationId + 
+						" at " + fireTime);
+			}
+		} catch (SecurityException e) {
+			Log.e(LOG_TAG, "SecurityException when scheduling alarm: " + e.getMessage());
 		}
-		Log.i(LOG_TAG, String.format("Scheduled notification '%d' to be delivered at %d.", notificationId, fireTime));
 	}
 
 	private static void scheduleRepeatingNotification(Context context, NotificationData notificationData, long fireTime) {
@@ -690,5 +773,4 @@ public class NotificationSchedulerPlugin extends GodotPlugin {
 		// cancel notification
 		NotificationManagerCompat.from(context).cancel(notificationId);
 	}
-
 }

@@ -7,10 +7,14 @@
 class_name NotificationScheduler extends Node
 
 signal initialization_completed()
+
 signal post_notifications_permission_granted(permission_name: String)
 signal post_notifications_permission_denied(permission_name: String)
 signal battery_optimizations_permission_granted(permission_name: String)
 signal battery_optimizations_permission_denied(permission_name: String)
+signal schedule_exact_alarm_permission_granted(permission_name: String)
+signal schedule_exact_alarm_permission_denied(permission_name: String)
+
 signal notification_opened(notification_data: NotificationData)
 signal notification_dismissed(notification_data: NotificationData)
 
@@ -21,6 +25,9 @@ const POST_NOTIFICATIONS_PERMISSION_GRANTED_SIGNAL_NAME = "post_notifications_pe
 const POST_NOTIFICATIONS_PERMISSION_DENIED_SIGNAL_NAME = "post_notifications_permission_denied"
 const BATTERY_OPTIMIZATIONS_PERMISSION_GRANTED_SIGNAL_NAME = "battery_optimizations_permission_granted"
 const BATTERY_OPTIMIZATIONS_PERMISSION_DENIED_SIGNAL_NAME = "battery_optimizations_permission_denied"
+const SCHEDULE_EXACT_ALARM_PERMISSION_GRANTED_SIGNAL_NAME = "schedule_exact_alarm_permission_granted"
+const SCHEDULE_EXACT_ALARM_PERMISSION_DENIED_SIGNAL_NAME = "schedule_exact_alarm_permission_denied"
+
 const NOTIFICATION_OPENED_SIGNAL_NAME = "notification_opened"
 const NOTIFICATION_DISMISSED_SIGNAL_NAME = "notification_dismissed"
 
@@ -38,6 +45,8 @@ func _connect_signals() -> void:
 	_plugin_singleton.connect(POST_NOTIFICATIONS_PERMISSION_DENIED_SIGNAL_NAME, _on_post_notifications_permission_denied)
 	_plugin_singleton.connect(BATTERY_OPTIMIZATIONS_PERMISSION_GRANTED_SIGNAL_NAME, _on_battery_optimizations_permission_granted)
 	_plugin_singleton.connect(BATTERY_OPTIMIZATIONS_PERMISSION_DENIED_SIGNAL_NAME, _on_battery_optimizations_permission_denied)
+	_plugin_singleton.connect(SCHEDULE_EXACT_ALARM_PERMISSION_GRANTED_SIGNAL_NAME, _on_schedule_exact_alarm_permission_granted)
+	_plugin_singleton.connect(SCHEDULE_EXACT_ALARM_PERMISSION_DENIED_SIGNAL_NAME, _on_schedule_exact_alarm_permission_denied)
 
 
 func initialize() -> void:
@@ -151,6 +160,27 @@ func request_ignore_battery_optimizations_permission() -> Error:
 	return __result
 
 
+func has_exact_alarm_permission() -> bool:
+	var __result: bool = false
+	if _plugin_singleton:
+		__result = _plugin_singleton.has_exact_alarm_permission()
+	else:
+		log_error("%s singleton not initialized!" % PLUGIN_SINGLETON_NAME)
+	return __result
+
+
+func request_exact_alarm_permission() -> Error:
+	var __result: Error = ERR_UNCONFIGURED
+
+	if _plugin_singleton:
+		__result = _plugin_singleton.request_exact_alarm_permission()
+	else:
+		log_error("%s singleton not initialized!" % PLUGIN_SINGLETON_NAME)
+		__result == ERR_UNCONFIGURED
+
+	return __result
+
+
 func open_app_info_settings() -> Error:
 	var __result: Error
 
@@ -189,6 +219,14 @@ func _on_battery_optimizations_permission_granted(a_permission_name: String) -> 
 
 func _on_battery_optimizations_permission_denied(a_permission_name: String) -> void:
 	battery_optimizations_permission_denied.emit(a_permission_name)
+
+
+func _on_schedule_exact_alarm_permission_granted(a_permission_name: String) -> void:
+	schedule_exact_alarm_permission_granted.emit(a_permission_name)
+
+
+func _on_schedule_exact_alarm_permission_denied(a_permission_name: String) -> void:
+	schedule_exact_alarm_permission_denied.emit(a_permission_name)
 
 
 static func log_error(a_description: String) -> void:
