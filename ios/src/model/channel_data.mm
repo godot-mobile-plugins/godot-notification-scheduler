@@ -7,10 +7,10 @@
 #import "nsp_converter.h"
 
 
-const String CHANNEL_ID_PROPERTY = "id";
-const String CHANNEL_NAME_PROPERTY = "name";
-const String CHANNEL_DESCRIPTION_PROPERTY = "description";
-const String CHANNEL_IMPORTANCE_PROPERTY = "importance";
+const String CHANNEL_ID_PROPERTY = "channel_id";
+const String CHANNEL_NAME_PROPERTY = "channel_name";
+const String CHANNEL_DESCRIPTION_PROPERTY = "channel_description";
+const String CHANNEL_IMPORTANCE_PROPERTY = "channel_importance";
 
 
 @implementation ChannelData

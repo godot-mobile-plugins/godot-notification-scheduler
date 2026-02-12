@@ -66,13 +66,13 @@ func _on_notification_scheduler_initialization_completed() -> void:
 		_notification_permission_button.disabled = false
 		_print_to_screen("App does not have post notification permissions!")
 
-	if notification_scheduler.is_ignoring_battery_optimizations():
+	if notification_scheduler.has_battery_optimizations_permission():
 		_print_to_screen("App is exempt from battery optimizations")
 	else:
 		_optimization_permission_button.disabled = false
 		_print_to_screen("App does not have battery optimization exemption permissions!")
 
-	if notification_scheduler.has_exact_alarm_permission():
+	if notification_scheduler.has_schedule_exact_alarm_permission():
 		_print_to_screen("App has exact alarm permission")
 	else:
 		_exact_alarm_permission_button.disabled = false
@@ -202,12 +202,12 @@ func _on_notification_permission_button_pressed() -> void:
 
 func _on_optimization_permission_button_pressed() -> void:
 	_optimization_permission_button.disabled = true
-	notification_scheduler.request_ignore_battery_optimizations_permission()
+	notification_scheduler.request_battery_optimizations_permission()
 
 
 func _on_exact_alarm_button_pressed() -> void:
 	_exact_alarm_permission_button.disabled = true
-	notification_scheduler.request_exact_alarm_permission()
+	notification_scheduler.request_schedule_exact_alarm_permission()
 
 
 func _on_notification_scheduler_post_notifications_permission_granted(permission_name: String) -> void:

@@ -13,10 +13,10 @@ enum Importance {
 	MAX = 5	# Unused as of SDK 34
 }
 
-const DATA_KEY_ID = "id"
-const DATA_KEY_NAME = "name"
-const DATA_KEY_DESCRIPTION = "description"
-const DATA_KEY_IMPORTANCE = "importance"
+const DATA_KEY_ID = "channel_id"
+const DATA_KEY_NAME = "channel_name"
+const DATA_KEY_DESCRIPTION = "channel_description"
+const DATA_KEY_IMPORTANCE = "channel_importance"
 const DATA_KEY_BADGE_ENABLED = "badge_enabled"
 
 var _data: Dictionary

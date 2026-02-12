@@ -145,10 +145,10 @@ If using both Android & iOS, ensure **same addon interface version**.
 - `open_app_info_settings()` - open the system settings screen for app
 
 ### <img src="https://raw.githubusercontent.com/godot-mobile-plugins/godot-notification-scheduler/main/addon/src/icon.png" width="16"> Android-only Methods
-- `is_ignoring_battery_optimizations()` – returns true if app has already been granted permissions to ignore battery optimizations
-- `request_ignore_battery_optimizations_permission()` – request permissions to ignore battery optimizations from user
-- `has_exact_alarm_permission()` – returns true if app has already been granted permission to schedule exact alarms
-- `request_exact_alarm_permission()` – request permission to schedule exact alarms rom user
+- `has_battery_optimizations_permission()` – returns true if app has already been granted permissions to ignore battery optimizations
+- `request_battery_optimizations_permission()` – request permissions to ignore battery optimizations from user
+- `has_schedule_exact_alarm_permission()` – returns true if app has already been granted permission to schedule exact alarms
+- `request_schedule_exact_alarm_permission()` – request permission to schedule exact alarms rom user
 
 ### <img src="https://raw.githubusercontent.com/godot-mobile-plugins/godot-notification-scheduler/main/addon/src/icon.png" width="16"> iOS-only Methods
 - `set_badge_count(count)` – show/hide app icon badge with count (on Android, use `NotificationData`'s `set_badge_count()` method)

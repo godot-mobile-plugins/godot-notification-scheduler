@@ -71,7 +71,6 @@ public class NotificationSchedulerPlugin extends GodotPlugin {
 	public static final String PREF_NAME = CLASS_NAME + "_prefs";
 	private static final String KEY_PENDING_DISMISSED = "pending_dismissed_ids";
 	private static final String KEY_SCHEDULED_NOTIFICATIONS = "scheduled_notifications";
-	public static final String KEY_SAVED_CHANNELS = "saved_channels"; // New key for channel persistence
 	private static final String DATA_KEY_FIRE_TIME = "fire_time_ms"; 
 
 	private static final int POST_NOTIFICATIONS_PERMISSION_REQUEST_CODE = 11803;
@@ -128,36 +127,15 @@ public class NotificationSchedulerPlugin extends GodotPlugin {
 			} else {
 				Log.d(LOG_TAG, String.format("%s():: channel id: %s already exists",
 						"create_notification_channel", channelData.getId()));
-				// Proceed to save it anyway to ensure persistence is up to date
-				saveChannelData(activity, channelData);
 
 				return Error.ERR_ALREADY_EXISTS.toNativeValue();
 			}
-
-			// Persist channel data for the receiver process
-			saveChannelData(activity, channelData);
 		} else {
 			Log.e(LOG_TAG, "create_notification_channel(): invalid channel data object");
 			return Error.ERR_INVALID_DATA.toNativeValue();
 		}
 
 		return Error.OK.toNativeValue();
-	}
-
-	/**
-	 * Saves channel data to SharedPreferences so the Receiver can recreate it if needed.
-	 */
-	private void saveChannelData(Context context, ChannelData channelData) {
-		try {
-			SharedPreferences channelsPrefs = context.getSharedPreferences(KEY_SAVED_CHANNELS, Context.MODE_PRIVATE);
-			
-			JSONObject json = channelData.toJson();
-
-			channelsPrefs.edit().putString(channelData.getId(), json.toString()).apply();
-			Log.d(LOG_TAG, "Persisted channel data for: " + channelData.getId());
-		} catch (JSONException e) {
-			Log.e(LOG_TAG, "Failed to persist channel data: " + e.getMessage());
-		}
 	}
 
 	/**
@@ -313,9 +291,9 @@ public class NotificationSchedulerPlugin extends GodotPlugin {
 	 * Checks if the app is already on the battery optimization whitelist.
 	 */
 	@UsedByGodot
-	public boolean is_ignoring_battery_optimizations() {
+	public boolean has_battery_optimizations_permission() {
 		if (!isInitialized) {
-			Log.e(LOG_TAG, "is_ignoring_battery_optimizations(): plugin is not initialized!");
+			Log.e(LOG_TAG, "has_battery_optimizations_permission(): plugin is not initialized!");
 			return false;
 		}
 
@@ -323,7 +301,7 @@ public class NotificationSchedulerPlugin extends GodotPlugin {
 			PowerManager powerManager = (PowerManager) activity.getSystemService(Context.POWER_SERVICE);
 			return powerManager.isIgnoringBatteryOptimizations(activity.getPackageName());
 		} else {
-			Log.i(LOG_TAG, "is_ignoring_battery_optimizations():: can't check permission, because SDK version is " + Build.VERSION.SDK_INT);
+			Log.i(LOG_TAG, "has_battery_optimizations_permission():: can't check permission, because SDK version is " + Build.VERSION.SDK_INT);
 		}
 		return true;
 	}
@@ -333,14 +311,14 @@ public class NotificationSchedulerPlugin extends GodotPlugin {
 	 * Triggers a system dialog.
 	 */
 	@UsedByGodot
-	public int request_ignore_battery_optimizations_permission() {
+	public int request_battery_optimizations_permission() {
 		if (!isInitialized) {
-			Log.e(LOG_TAG, "request_ignore_battery_optimizations_permission(): plugin is not initialized!");
+			Log.e(LOG_TAG, "request_battery_optimizations_permission(): plugin is not initialized!");
 			return Error.ERR_UNCONFIGURED.toNativeValue();
 		}
 
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-			if (is_ignoring_battery_optimizations()) {
+			if (has_battery_optimizations_permission()) {
 				// Already granted
 				emitSignal(getGodot(), getPluginName(), BATTERY_OPTIMIZATIONS_PERMISSION_GRANTED_SIGNAL);
 				return Error.OK.toNativeValue();
@@ -351,7 +329,7 @@ public class NotificationSchedulerPlugin extends GodotPlugin {
 				intent.setData(Uri.parse("package:" + activity.getPackageName()));
 				activity.startActivityForResult(intent, BATTERY_OPTIMIZATIONS_PERMISSION_REQUEST_CODE);
 			} catch (Exception e) {
-				Log.e(LOG_TAG, "request_ignore_battery_optimizations_permission():: Failed due to " + e.getMessage());
+				Log.e(LOG_TAG, "request_battery_optimizations_permission():: Failed due to " + e.getMessage());
 				return Error.FAILED.toNativeValue();
 			}
 		} else {
@@ -366,7 +344,7 @@ public class NotificationSchedulerPlugin extends GodotPlugin {
 	 * Check if exact alarm permission is granted (required for Android 12+)
 	 */
 	@UsedByGodot
-	public boolean has_exact_alarm_permission() {
+	public boolean has_schedule_exact_alarm_permission() {
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
 			AlarmManager alarmManager = (AlarmManager) activity.getSystemService(ALARM_SERVICE);
 			return alarmManager.canScheduleExactAlarms();
@@ -378,9 +356,9 @@ public class NotificationSchedulerPlugin extends GodotPlugin {
 	 * Request exact alarm permission (Android 12+)
 	 */
 	@UsedByGodot
-	public int request_exact_alarm_permission() {
+	public int request_schedule_exact_alarm_permission() {
 		if (!isInitialized) {
-			Log.e(LOG_TAG, "request_exact_alarm_permission(): plugin is not initialized!");
+			Log.e(LOG_TAG, "request_schedule_exact_alarm_permission(): plugin is not initialized!");
 			return Error.ERR_UNCONFIGURED.toNativeValue();
 		}
 
@@ -537,7 +515,7 @@ public class NotificationSchedulerPlugin extends GodotPlugin {
 
 		if (requestCode == BATTERY_OPTIMIZATIONS_PERMISSION_REQUEST_CODE) {
 			// Check the state again to be sure, as resultCode can sometimes be misleading for this specific intent
-			if (is_ignoring_battery_optimizations()) {
+			if (has_battery_optimizations_permission()) {
 				Log.d(LOG_TAG, "onMainActivityResult():: battery optimization permission granted");
 				emitSignal(getGodot(), getPluginName(), BATTERY_OPTIMIZATIONS_PERMISSION_GRANTED_SIGNAL,
 						Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS);
@@ -708,6 +686,17 @@ public class NotificationSchedulerPlugin extends GodotPlugin {
 		Intent intent = new Intent(context, NotificationReceiver.class);
 		notificationData.populateIntent(intent);
 
+		// Check if notification channel exists
+		NotificationManager manager = context.getSystemService(NotificationManager.class);
+		String channelId = notificationData.getChannelId();
+		NotificationChannel channel = manager.getNotificationChannel(channelId);
+		if (channel == null) {
+			Log.w(LOG_TAG, "scheduleNotification(): Channel '" + channelId + "' missing!");
+		} else {
+			ChannelData channelData = new ChannelData(channel);
+			channelData.populateIntent(intent);
+		}
+
 		AlarmManager alarmManager = (AlarmManager) context.getSystemService(ALARM_SERVICE);
 		
 		PendingIntent pendingIntent = PendingIntent.getBroadcast(context, notificationId, intent,
@@ -723,7 +712,7 @@ public class NotificationSchedulerPlugin extends GodotPlugin {
 				} else {
 					// Fallback to inexact alarm if permission is missing
 					alarmManager.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, fireTime, pendingIntent);
-					Log.i(LOG_TAG, "Scheduled inexact alarm (Permission missing) for notification " + notificationId + 
+					Log.i(LOG_TAG, "Scheduled inexact alarm (no SCHEDULE_EXACT_ALARM permission) for notification " + notificationId + 
 							" at " + fireTime);
 				}
 			} else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {

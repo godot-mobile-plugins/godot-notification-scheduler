@@ -6,21 +6,26 @@ package org.godotengine.plugin.notification.model;
 
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.content.Intent;
 import android.os.Build;
+import android.util.Log;
 
 import androidx.annotation.RequiresApi;
 
 import org.godotengine.godot.Dictionary;
 
+import org.godotengine.plugin.notification.NotificationSchedulerPlugin;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
 public class ChannelData {
+	private static final String LOG_TAG = NotificationSchedulerPlugin.LOG_TAG + "::" + ChannelData.class.getSimpleName();
 
-	private static String DATA_KEY_ID = "id";
-	private static String DATA_KEY_NAME = "name";
-	private static String DATA_KEY_DESCRIPTION = "description";
-	private static String DATA_KEY_IMPORTANCE = "importance";
+	private static String DATA_KEY_ID = "channel_id";
+	private static String DATA_KEY_NAME = "channel_name";
+	private static String DATA_KEY_DESCRIPTION = "channel_description";
+	private static String DATA_KEY_IMPORTANCE = "channel_importance";
 	private static String DATA_KEY_BADGE_ENABLED = "badge_enabled";
 
 	private static String DEFAULT_NAME = "Default Channel";
@@ -35,7 +40,7 @@ public class ChannelData {
 		data.put(DATA_KEY_ID, id);
 		data.put(DATA_KEY_NAME, DEFAULT_NAME);
 		data.put(DATA_KEY_DESCRIPTION, DEFAULT_DESCRIPTION);
-		data.put(DATA_KEY_IMPORTANCE, DEFAULT_IMPORTANCE);
+		data.put(DATA_KEY_IMPORTANCE, (long) DEFAULT_IMPORTANCE);
 		data.put(DATA_KEY_BADGE_ENABLED, DEFAULT_BADGE_ENABLED);
 	}
 
@@ -48,8 +53,36 @@ public class ChannelData {
 		data.put(DATA_KEY_ID, id);
 		data.put(DATA_KEY_NAME, json.optString(DATA_KEY_NAME, DEFAULT_NAME));
 		data.put(DATA_KEY_DESCRIPTION, json.optString(DATA_KEY_DESCRIPTION, DEFAULT_DESCRIPTION));
-		data.put(DATA_KEY_IMPORTANCE, json.optInt(DATA_KEY_IMPORTANCE, DEFAULT_IMPORTANCE));
+		data.put(DATA_KEY_IMPORTANCE, (long) json.optInt(DATA_KEY_IMPORTANCE, DEFAULT_IMPORTANCE));
 		data.put(DATA_KEY_BADGE_ENABLED, json.optBoolean(DATA_KEY_BADGE_ENABLED, DEFAULT_BADGE_ENABLED));
+	}
+
+	public ChannelData(Intent intent) {
+		this.data = new Dictionary();
+		if (intent.hasExtra(DATA_KEY_ID)) {
+			data.put(DATA_KEY_ID, intent.getStringExtra(DATA_KEY_ID));
+		}
+		if (intent.hasExtra(DATA_KEY_NAME)) {
+			data.put(DATA_KEY_NAME, intent.getStringExtra(DATA_KEY_NAME));
+		}
+		if (intent.hasExtra(DATA_KEY_DESCRIPTION)) {
+			data.put(DATA_KEY_DESCRIPTION, intent.getStringExtra(DATA_KEY_DESCRIPTION));
+		}
+		if (intent.hasExtra(DATA_KEY_IMPORTANCE)) {
+			data.put(DATA_KEY_IMPORTANCE, (long) intent.getIntExtra(DATA_KEY_IMPORTANCE, DEFAULT_IMPORTANCE));
+		}
+		if (intent.hasExtra(DATA_KEY_BADGE_ENABLED)) {
+			data.put(DATA_KEY_BADGE_ENABLED, intent.getBooleanExtra(DATA_KEY_BADGE_ENABLED, DEFAULT_BADGE_ENABLED));
+		}
+	}
+
+	public ChannelData(NotificationChannel channel) {
+		this.data = new Dictionary();
+		data.put(DATA_KEY_ID, channel.getId());
+		data.put(DATA_KEY_NAME, channel.getName().toString());
+		data.put(DATA_KEY_DESCRIPTION, channel.getDescription());
+		data.put(DATA_KEY_IMPORTANCE, (long) channel.getImportance());
+		data.put(DATA_KEY_BADGE_ENABLED, channel.canShowBadge());
 	}
 
 	public String getId() {
@@ -65,7 +98,7 @@ public class ChannelData {
 	}
 
 	public int getImportance() {
-		return (int) data.get(DATA_KEY_IMPORTANCE);
+		return ((Long) data.get(DATA_KEY_IMPORTANCE)).intValue();
 	}
 
 	public boolean getBadgeEnabled() {
@@ -85,6 +118,16 @@ public class ChannelData {
 		return data.containsKey(DATA_KEY_ID) &&
 				data.containsKey(DATA_KEY_NAME) &&
 				data.containsKey(DATA_KEY_DESCRIPTION);
+	}
+
+	public void populateIntent(Intent intent) {
+		intent.putExtra(DATA_KEY_ID, this.getId());
+		intent.putExtra(DATA_KEY_NAME, this.getName());
+		intent.putExtra(DATA_KEY_DESCRIPTION, this.getDescription());
+		intent.putExtra(DATA_KEY_IMPORTANCE, this.getImportance());
+		if (this.data.containsKey(DATA_KEY_BADGE_ENABLED)) {
+			intent.putExtra(DATA_KEY_BADGE_ENABLED, this.getBadgeEnabled());
+		}
 	}
 
 	public JSONObject toJson() throws JSONException {

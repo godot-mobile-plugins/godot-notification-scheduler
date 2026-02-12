@@ -34,10 +34,10 @@ void NotificationSchedulerPlugin::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("set_badge_count"), &NotificationSchedulerPlugin::set_badge_count);
 	ClassDB::bind_method(D_METHOD("get_notification_id"), &NotificationSchedulerPlugin::get_notification_id);
 	ClassDB::bind_method(D_METHOD("open_app_info_settings"), &NotificationSchedulerPlugin::open_app_info_settings);
-	ClassDB::bind_method(D_METHOD("is_ignoring_battery_optimizations"), &NotificationSchedulerPlugin::is_ignoring_battery_optimizations);
-	ClassDB::bind_method(D_METHOD("request_ignore_battery_optimizations_permission"), &NotificationSchedulerPlugin::request_ignore_battery_optimizations_permission);
-	ClassDB::bind_method(D_METHOD("has_exact_alarm_permission"), &NotificationSchedulerPlugin::has_exact_alarm_permission);
-	ClassDB::bind_method(D_METHOD("request_exact_alarm_permission"), &NotificationSchedulerPlugin::request_exact_alarm_permission);
+	ClassDB::bind_method(D_METHOD("has_battery_optimizations_permission"), &NotificationSchedulerPlugin::has_battery_optimizations_permission);
+	ClassDB::bind_method(D_METHOD("request_battery_optimizations_permission"), &NotificationSchedulerPlugin::request_battery_optimizations_permission);
+	ClassDB::bind_method(D_METHOD("has_schedule_exact_alarm_permission"), &NotificationSchedulerPlugin::has_schedule_exact_alarm_permission);
+	ClassDB::bind_method(D_METHOD("request_schedule_exact_alarm_permission"), &NotificationSchedulerPlugin::request_schedule_exact_alarm_permission);
 
 	ADD_SIGNAL(MethodInfo(INITIALIZATION_COMPLETED));
 	ADD_SIGNAL(MethodInfo(NOTIFICATION_OPENED_SIGNAL, PropertyInfo(Variant::DICTIONARY, "notification_data")));
@@ -163,42 +163,42 @@ Error NotificationSchedulerPlugin::request_post_notifications_permission() {
 	return OK;
 }
 
-bool NotificationSchedulerPlugin::is_ignoring_battery_optimizations() {
+bool NotificationSchedulerPlugin::has_battery_optimizations_permission() {
 	if (!is_initialized) {
 		NSLog(@"NotificationSchedulerPlugin: ERROR: Plugin not initialized");
 		return false;
 	}
-	NSLog(@"NotificationSchedulerPlugin: is_ignoring_battery_optimizations() method is not supported on iOS");
+	NSLog(@"NotificationSchedulerPlugin: has_battery_optimizations_permission() method is not supported on iOS");
 	return true;
 }
 
-Error NotificationSchedulerPlugin::request_ignore_battery_optimizations_permission() {
+Error NotificationSchedulerPlugin::request_battery_optimizations_permission() {
 	if (!is_initialized) {
 		NSLog(@"NotificationSchedulerPlugin: ERROR: Plugin not initialized");
 		return ERR_UNCONFIGURED;
 	}
-	NSLog(@"NotificationSchedulerPlugin: request_ignore_battery_optimizations_permission() method is not supported on iOS");
+	NSLog(@"NotificationSchedulerPlugin: request_battery_optimizations_permission() method is not supported on iOS");
 	this->call_deferred("emit_signal", BATTERY_OPTIMIZATIONS_PERMISSION_GRANTED_SIGNAL,
-			"request_ignore_battery_optimizations_permission");
+			"request_battery_optimizations_permission");
 	return OK;
 }
 
-bool NotificationSchedulerPlugin::has_exact_alarm_permission() {
+bool NotificationSchedulerPlugin::has_schedule_exact_alarm_permission() {
 	if (!is_initialized) {
 		NSLog(@"NotificationSchedulerPlugin: ERROR: Plugin not initialized");
 		return false;
 	}
-	NSLog(@"NotificationSchedulerPlugin: has_exact_alarm_permission() method is not supported on iOS");
+	NSLog(@"NotificationSchedulerPlugin: has_schedule_exact_alarm_permission() method is not supported on iOS");
 	return true;
 }
 
-Error NotificationSchedulerPlugin::request_exact_alarm_permission() {
+Error NotificationSchedulerPlugin::request_schedule_exact_alarm_permission() {
 	if (!is_initialized) {
 		NSLog(@"NotificationSchedulerPlugin: ERROR: Plugin not initialized");
 		return ERR_UNCONFIGURED;
 	}
-	NSLog(@"NotificationSchedulerPlugin: request_exact_alarm_permission() method is not supported on iOS");
-	this->call_deferred("emit_signal", SCHEDULE_EXACT_ALARM_PERMISSION_GRANTED_SIGNAL, "request_exact_alarm_permission");
+	NSLog(@"NotificationSchedulerPlugin: request_schedule_exact_alarm_permission() method is not supported on iOS");
+	this->call_deferred("emit_signal", SCHEDULE_EXACT_ALARM_PERMISSION_GRANTED_SIGNAL, "request_schedule_exact_alarm_permission");
 	return OK;
 }
 

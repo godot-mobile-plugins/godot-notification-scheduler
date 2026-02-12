@@ -10,7 +10,6 @@ import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Build;
 import android.util.Log;
 
@@ -19,8 +18,6 @@ import androidx.core.app.NotificationManagerCompat;
 import org.godotengine.plugin.notification.model.ChannelData;
 import org.godotengine.plugin.notification.model.NotificationData;
 import org.godotengine.plugin.notification.NotificationSchedulerPlugin;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 
 public class NotificationReceiver extends BroadcastReceiver {
@@ -39,30 +36,21 @@ public class NotificationReceiver extends BroadcastReceiver {
 		} else if (intent.hasExtra(NotificationData.DATA_KEY_ID)) {
 			NotificationData notificationData = new NotificationData(intent);
 
+			Log.d(LOG_TAG, String.format("%s():: Received notification %d", "onReceive", notificationData.getId()));
+
 			// Ensure that the channel exists (Self-Healing)
 			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
 				NotificationManager manager = context.getSystemService(NotificationManager.class);
 				String channelId = notificationData.getChannelId();
 
 				if (manager != null && manager.getNotificationChannel(channelId) == null) {
-					Log.w(LOG_TAG, "Channel '" + channelId + "' missing. Attempting to restore from persistence...");
+					Log.w(LOG_TAG, "Channel '" + channelId + "' missing. Attempting to restore from intent...");
 
-					// Try to load from SharedPreferences
-					SharedPreferences channelsPrefs = context.getSharedPreferences(NotificationSchedulerPlugin.KEY_SAVED_CHANNELS, Context.MODE_PRIVATE);
-					String channelJson = channelsPrefs.getString(channelId, null);
-					
-					ChannelData channelData;
+					// Try to load from ıntent
+					ChannelData channelData = new ChannelData(intent);
 
-					if (channelJson != null) {
-						try {
-							channelData = new ChannelData(channelId, new JSONObject(channelJson));
-							Log.i(LOG_TAG, "Restored channel data from persistence: " + channelData.getName());
-						} catch (JSONException e) {
-							Log.e(LOG_TAG, "Failed to parse saved channel data for id: " + channelId);
-							channelData = new ChannelData(channelId);
-						}
-					} else {
-						Log.w(LOG_TAG, "No persisted data found for channel '" + channelId + "'. Using default values.");
+					if (!channelData.isValid()) {
+						Log.w(LOG_TAG, "No valid data found for channel '" + channelId + "' in notification intent. Using default values.");
 						channelData = new ChannelData(channelId);
 					}
 

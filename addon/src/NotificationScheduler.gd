@@ -139,20 +139,20 @@ func request_post_notifications_permission() -> Error:
 	return __result
 
 
-func is_ignoring_battery_optimizations() -> bool:
+func has_battery_optimizations_permission() -> bool:
 	var __result: bool = false
 	if _plugin_singleton:
-		__result = _plugin_singleton.is_ignoring_battery_optimizations()
+		__result = _plugin_singleton.has_battery_optimizations_permission()
 	else:
 		log_error("%s singleton not initialized!" % PLUGIN_SINGLETON_NAME)
 	return __result
 
 
-func request_ignore_battery_optimizations_permission() -> Error:
+func request_battery_optimizations_permission() -> Error:
 	var __result: Error
 
 	if _plugin_singleton:
-		__result = _plugin_singleton.request_ignore_battery_optimizations_permission()
+		__result = _plugin_singleton.request_battery_optimizations_permission()
 	else:
 		log_error("%s singleton not initialized!" % PLUGIN_SINGLETON_NAME)
 		__result == ERR_UNCONFIGURED
@@ -160,20 +160,20 @@ func request_ignore_battery_optimizations_permission() -> Error:
 	return __result
 
 
-func has_exact_alarm_permission() -> bool:
+func has_schedule_exact_alarm_permission() -> bool:
 	var __result: bool = false
 	if _plugin_singleton:
-		__result = _plugin_singleton.has_exact_alarm_permission()
+		__result = _plugin_singleton.has_schedule_exact_alarm_permission()
 	else:
 		log_error("%s singleton not initialized!" % PLUGIN_SINGLETON_NAME)
 	return __result
 
 
-func request_exact_alarm_permission() -> Error:
+func request_schedule_exact_alarm_permission() -> Error:
 	var __result: Error = ERR_UNCONFIGURED
 
 	if _plugin_singleton:
-		__result = _plugin_singleton.request_exact_alarm_permission()
+		__result = _plugin_singleton.request_schedule_exact_alarm_permission()
 	else:
 		log_error("%s singleton not initialized!" % PLUGIN_SINGLETON_NAME)
 		__result == ERR_UNCONFIGURED

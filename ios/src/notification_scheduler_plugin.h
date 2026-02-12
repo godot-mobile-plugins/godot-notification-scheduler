@@ -45,10 +45,10 @@ public:
 	Error initialize();
 	bool has_post_notifications_permission();
 	Error request_post_notifications_permission();
-	bool is_ignoring_battery_optimizations();
-	Error request_ignore_battery_optimizations_permission();
-	bool has_exact_alarm_permission();
-	Error request_exact_alarm_permission();
+	bool has_battery_optimizations_permission();
+	Error request_battery_optimizations_permission();
+	bool has_schedule_exact_alarm_permission();
+	Error request_schedule_exact_alarm_permission();
 	Error create_notification_channel(Dictionary dict);
 	Error schedule(Dictionary notificationData);
 	Error cancel(int notificationId);
