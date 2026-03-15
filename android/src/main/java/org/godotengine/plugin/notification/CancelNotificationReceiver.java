@@ -13,7 +13,8 @@ import org.godotengine.plugin.notification.model.NotificationData;
 
 
 public class CancelNotificationReceiver extends BroadcastReceiver {
-	private static final String LOG_TAG = NotificationSchedulerPlugin.LOG_TAG + "::" + CancelNotificationReceiver.class.getSimpleName();
+	private static final String LOG_TAG = NotificationSchedulerPlugin.LOG_TAG + "::"
+			+ CancelNotificationReceiver.class.getSimpleName();
 
 	private static final String ICON_RESOURCE_TYPE = "drawable";
 

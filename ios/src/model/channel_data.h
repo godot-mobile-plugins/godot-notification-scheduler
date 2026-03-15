@@ -9,21 +9,19 @@
 
 #include "core/object/class_db.h"
 
-
 extern const String CHANNEL_ID_PROPERTY;
 extern const String CHANNEL_NAME_PROPERTY;
 extern const String CHANNEL_DESCRIPTION_PROPERTY;
 extern const String CHANNEL_IMPORTANCE_PROPERTY;
 
-
 @interface ChannelData : NSObject
 
-@property (nonatomic, strong) NSString* channelId;
-@property (nonatomic, strong) NSString* channelName;
-@property (nonatomic, strong) NSString* channelDescription;
-@property (nonatomic, assign) NSInteger channelImportance;
+@property(nonatomic, strong) NSString *channelId;
+@property(nonatomic, strong) NSString *channelName;
+@property(nonatomic, strong) NSString *channelDescription;
+@property(nonatomic, assign) NSInteger channelImportance;
 
-- (instancetype) initWithDictionary:(Dictionary) configData;
+- (instancetype)initWithDictionary:(Dictionary)configData;
 
 @end
 

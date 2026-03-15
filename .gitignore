@@ -49,3 +49,11 @@ xcuserdata/
 
 # macOS
 .DS_Store
+
+# documentation
+site
+
+# Node
+node_modules/
+package-lock.json
+package.json

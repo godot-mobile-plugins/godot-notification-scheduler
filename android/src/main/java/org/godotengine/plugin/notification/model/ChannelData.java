@@ -8,7 +8,6 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Intent;
 import android.os.Build;
-import android.util.Log;
 
 import androidx.annotation.RequiresApi;
 
@@ -20,7 +19,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class ChannelData {
-	private static final String LOG_TAG = NotificationSchedulerPlugin.LOG_TAG + "::" + ChannelData.class.getSimpleName();
+	private static final String LOG_TAG = NotificationSchedulerPlugin.LOG_TAG + "::"
+			+ ChannelData.class.getSimpleName();
 
 	private static String DATA_KEY_ID = "channel_id";
 	private static String DATA_KEY_NAME = "channel_name";

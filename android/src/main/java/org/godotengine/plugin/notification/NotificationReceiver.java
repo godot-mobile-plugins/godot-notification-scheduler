@@ -5,7 +5,6 @@
 package org.godotengine.plugin.notification;
 
 import android.app.Notification;
-import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -17,11 +16,11 @@ import androidx.core.app.NotificationManagerCompat;
 
 import org.godotengine.plugin.notification.model.ChannelData;
 import org.godotengine.plugin.notification.model.NotificationData;
-import org.godotengine.plugin.notification.NotificationSchedulerPlugin;
 
 
 public class NotificationReceiver extends BroadcastReceiver {
-	private static final String LOG_TAG = NotificationSchedulerPlugin.LOG_TAG + "::" + NotificationReceiver.class.getSimpleName();
+	private static final String LOG_TAG = NotificationSchedulerPlugin.LOG_TAG + "::"
+			+ NotificationReceiver.class.getSimpleName();
 
 	private static final String ICON_RESOURCE_TYPE = "drawable";
 
@@ -50,7 +49,8 @@ public class NotificationReceiver extends BroadcastReceiver {
 					ChannelData channelData = new ChannelData(intent);
 
 					if (!channelData.isValid()) {
-						Log.w(LOG_TAG, "No valid data found for channel '" + channelId + "' in notification intent. Using default values.");
+						Log.w(LOG_TAG, "No valid data found for channel '" + channelId
+								+ "' in notification intent. Using default values.");
 						channelData = new ChannelData(channelId);
 					}
 
@@ -68,7 +68,8 @@ public class NotificationReceiver extends BroadcastReceiver {
 			if (notification != null) {
 				NotificationManagerCompat.from(context).notify(notificationData.getId(), notification);
 			} else {
-				Log.w(LOG_TAG, "Unable to forward notification " + notificationData.getId() + ": notification object is null");
+				Log.w(LOG_TAG, "Unable to forward notification " + notificationData.getId()
+						+ ": notification object is null");
 			}
 		} else {
 			Log.e(LOG_TAG, String.format("%s():: %s extra not found in intent. Unable to generate notification.",

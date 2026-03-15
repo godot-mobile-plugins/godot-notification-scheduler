@@ -1,27 +1,24 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8" ?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
-
 	<!-- For posting notifications on Android 13+ -->
-	<uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
-	
+	<uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+
 	<!-- For scheduling exact alarms on Android 12+ -->
-	<uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM"/>
-	
+	<uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
+
 	<!-- For receiving boot events to reschedule notifications -->
-	<uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
-	
+	<uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+
 	<!-- For waking device when notification fires -->
-	<uses-permission android:name="android.permission.WAKE_LOCK"/>
-	
+	<uses-permission android:name="android.permission.WAKE_LOCK" />
+
 	<!-- For battery optimization exemption -->
-	<uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS"/>
+	<uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
 
 	<application>
-
 		<meta-data
 			android:name="org.godotengine.plugin.v2.${godotPluginName}"
-			android:value="${godotPluginPackageName}.${godotPluginName}" />
-
+			android:value="${godotPluginPackageName}.${godotPluginName}"
+		/>
 	</application>
-
 </manifest>

@@ -1,0 +1,58 @@
+#
+# © 2026-present https://github.com/cengiz-pz
+#
+
+name: Android Code Style
+
+on:
+  pull_request:
+    branches: [ main ]
+    paths:
+      - 'android/src/**/*.java'
+      - 'android/src/**/*.kt'
+      - 'android/src/**/*.xml'
+
+jobs:
+  android-style:
+    runs-on: ubuntu-22.04
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Set up Java
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: 21
+
+      - name: Install ktlint
+        uses: ./.github/actions/install-ktlint
+
+      - name: Run ktlint
+        run: ktlint "android/src/**/*.kt"
+
+      - name: Run Checkstyle
+        run: |
+          CHECKSTYLE_VERSION="13.3.0"
+          wget "https://github.com/checkstyle/checkstyle/releases/download/checkstyle-${CHECKSTYLE_VERSION}/checkstyle-${CHECKSTYLE_VERSION}-all.jar" \
+            -O checkstyle-all.jar
+          java -jar checkstyle-all.jar -c .github/config/checkstyle.xml android/src
+
+      - name: Install Node
+        uses: ./.github/actions/install-node
+
+      - name: Install Prettier and XML plugin
+        run: npm install --save-dev prettier @prettier/plugin-xml
+
+      - name: Check XML formatting
+        run: |
+          npx prettier \
+            --config .github/config/prettier.xml.json \
+            --parser xml \
+            --check "android/src/**/*.xml"
+
+      - name: Install editorconfig-checker
+        uses: ./.github/actions/install-ec
+
+      - name: Verify EditorConfig (Final Newline & Trailing Space)
+        run: find android/src \( -name "*.java" -o -name "*.kt" -o -name "*.xml" \) | xargs editorconfig-checker

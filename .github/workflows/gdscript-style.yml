@@ -1,0 +1,45 @@
+#
+# © 2026-present https://github.com/cengiz-pz
+#
+
+name: GDScript Code Style
+
+on:
+  pull_request:
+    branches: [ main ]
+    paths:
+      - 'addon/src/**/*.gd'
+      - 'demo/**/*.gd'
+
+jobs:
+  gdscript-style:
+    runs-on: ubuntu-22.04
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Install gdtoolkit
+        run: |
+          python3 -m venv /opt/gdtoolkit
+          /opt/gdtoolkit/bin/pip install gdtoolkit
+          echo "/opt/gdtoolkit/bin" >> $GITHUB_PATH
+          /opt/gdtoolkit/bin/gdformat --version
+
+      - name: Verify Formatting
+        run: |
+          cp .github/config/.gdformatrc .gdformatrc
+          echo "Checking GDScript formatting in addon directory..."
+          find addon/src -type f -name "*.gd" ! -name "*Plugin.gd" | xargs gdformat --check
+          echo "Checking GDScript formatting in demo directory..."
+          find demo -type f -name "*.gd" -not -path "demo/addons/*" | xargs gdformat --check
+
+      - name: Install editorconfig-checker
+        uses: ./.github/actions/install-ec
+
+      - name: Verify EditorConfig (Final Newline & Trailing Space)
+        run: |
+          cp .github/config/.gdformatrc .gdformatrc
+          echo "Running EditorConfig verification in addon directory..."
+          find addon/src -type f -name "*.gd" | xargs editorconfig-checker
+          echo "Running EditorConfig verification in demo directory..."
+          find demo -type f -name "*.gd" -not -path "demo/addons/*" | xargs editorconfig-checker

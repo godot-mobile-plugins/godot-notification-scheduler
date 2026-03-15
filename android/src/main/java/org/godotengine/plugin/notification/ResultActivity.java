@@ -14,7 +14,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import org.godotengine.plugin.notification.model.NotificationData;
 
 public class ResultActivity extends AppCompatActivity {
-	private static final String LOG_TAG = NotificationSchedulerPlugin.LOG_TAG + "::" + ResultActivity.class.getSimpleName();
+	private static final String LOG_TAG = NotificationSchedulerPlugin.LOG_TAG + "::"
+			+ ResultActivity.class.getSimpleName();
 
 	private static final String GODOT_APP_MAIN_ACTIVITY_CLASSPATH = "com.godot.game.GodotApp";
 	private static Class<?> godotAppMainActivityClass = null;

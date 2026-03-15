@@ -4,180 +4,295 @@
 
 import org.apache.tools.ant.filters.ReplaceTokens
 
-apply(from = "${projectDir}/config.gradle.kts")
+apply(from = "$projectDir/config/addon.gradle.kts")
 
 // Access the library catalog by name ("libs")
 val catalog = extensions.getByType<VersionCatalogsExtension>().named("libs")
 
 // Map all library aliases to their actual dependency provider
-val androidDependencies = catalog.libraryAliases.map { alias ->
-	catalog.findLibrary(alias).get().get()
-}
+val androidDependencies =
+    catalog.libraryAliases
+        .map { alias ->
+            catalog.findLibrary(alias).get().get()
+        }
 
 tasks {
-	register<Delete>("cleanOutput") {
-		// Keep the directory itself and delete files with specified type inside
-		delete(fileTree("${project.extra["outputDir"]}/${project.extra["pluginName"]}").apply {
-			include("**/*.gd")
-			include("**/*.cfg")
-			include("**/*.png")
-		})
-	}
+    val addonSrcDir = file(project.extra["templateDir"] as String)
 
-	register<Copy>("copyAssets") {
-		description = "Copies plugin assets such as PNG images to the output directory"
-		from(project.extra["templateDirectory"] as String)
-		into("${project.extra["outputDir"]}/addons/${project.extra["pluginName"]}")
-		include("**/*.png")
-	}
+    register<Delete>("cleanOutput") {
+        // Keep the directory itself and delete files with specified type inside
+        delete(
+            fileTree("${project.extra["outputDir"]}/${project.extra["pluginName"]}") {
+                include("**/*.gd")
+                include("**/*.cfg")
+                include("**/*.png")
+            },
+        )
+    }
 
-	register<Copy>("generateGDScript") {
-		description = "Copies the GDScript templates and plugin config to the output directory and replaces tokens"
-		finalizedBy("copyAssets")
+    register<Copy>("copyAssets") {
+        description = "Copies plugin assets such as PNG images to the output directory"
+        from(addonSrcDir)
+        into("${project.extra["outputDir"]}/addons/${project.extra["pluginName"]}")
+        include("**/*.png")
+    }
 
-		from(project.extra["templateDirectory"] as String)
-		into("${project.extra["outputDir"]}/addons/${project.extra["pluginName"]}")
+    register<Copy>("generateGDScript") {
+        description = "Copies the GDScript templates and plugin config to the output directory and replaces tokens"
+        finalizedBy("copyAssets")
 
-		include("**/*.gd")
-		include("**/*.cfg")
+        from(addonSrcDir)
+        into("${project.extra["outputDir"]}/addons/${project.extra["pluginName"]}")
 
-		// Explicit tokens map
-		val explicitTokens = mapOf(
-			"pluginName" to (project.extra["pluginName"] as String),
-			"pluginNodeName" to (project.extra["pluginNodeName"] as String),
-			"pluginVersion" to (project.extra["pluginVersion"] as String),
-			"pluginPackage" to (project.extra["pluginPackageName"] as String),
-			"androidDependencies" to androidDependencies.joinToString(", ") { "\"$it\"" },
-			"iosPlatformVersion" to (project.extra["iosPlatformVersion"] as String),
-			"iosFrameworks" to (project.extra["iosFrameworks"] as String)
-				.split(",")
-				.map { it.trim() }
-				.filter { it.isNotBlank() }
-				.joinToString(", ") { "\"$it\"" },
-			"iosEmbeddedFrameworks" to (project.extra["iosEmbeddedFrameworks"] as String)
-				.split(",")
-				.map { it.trim() }
-				.filter { it.isNotBlank() }
-				.joinToString(", ") { "\"$it\"" },
-			"iosLinkerFlags" to (project.extra["iosLinkerFlags"] as String)
-				.split(",")
-				.map { it.trim() }
-				.filter { it.isNotBlank() }
-				.joinToString(", ") { "\"$it\"" }
-		)
+        include("**/*.gd")
+        include("**/*.cfg")
 
-		// Print file name before processing
-		eachFile {
-			println("[DEBUG] Processing file: ${relativePath}")
-		}
+        // Explicit tokens map
+        val explicitTokens =
+            mapOf(
+                "pluginName" to (project.extra["pluginName"] as String),
+                "pluginNodeName" to (project.extra["pluginNodeName"] as String),
+                "pluginVersion" to (project.extra["pluginVersion"] as String),
+                "pluginPackage" to (project.extra["pluginPackageName"] as String),
+                "androidDependencies" to androidDependencies.joinToString(", ") { "\"$it\"" },
+                "iosPlatformVersion" to (project.extra["iosPlatformVersion"] as String),
+                "iosFrameworks" to
+                    (project.extra["iosFrameworks"] as String)
+                        .split(",")
+                        .map { it.trim() }
+                        .filter { it.isNotBlank() }
+                        .joinToString(", ") { "\"$it\"" },
+                "iosEmbeddedFrameworks" to
+                    (project.extra["iosEmbeddedFrameworks"] as String)
+                        .split(",")
+                        .map { it.trim() }
+                        .filter { it.isNotBlank() }
+                        .joinToString(", ") { "\"$it\"" },
+                "iosLinkerFlags" to
+                    (project.extra["iosLinkerFlags"] as String)
+                        .split(",")
+                        .map { it.trim() }
+                        .filter { it.isNotBlank() }
+                        .joinToString(", ") { "\"$it\"" },
+            )
 
-		// First pass: replacement for explicit tokens
-		filter { line: String ->
-			var result = line
+        // Print file name before processing
+        eachFile {
+            println("[DEBUG] Processing file: $relativePath")
+        }
 
-			explicitTokens.forEach { (key, value) ->
-				val token = "@$key@"
-				if (result.contains(token)) {
-					println("	[DEBUG] Replacing token $token with: $value")
-					result = result.replace(token, value)
-				}
-			}
+        // First pass: replacement for explicit tokens
+        filter { line: String ->
+            var result = line
 
-			result
-		}
+            explicitTokens.forEach { (key, value) ->
+                val token = "@$key@"
+                if (result.contains(token)) {
+                    println("	[DEBUG] Replacing token $token with: $value")
+                    result = result.replace(token, value)
+                }
+            }
 
-		// Second pass: generic replacement for extra tokens (ie. extra.myProperty=...)
-		filter { line: String ->
-			var result = line
+            result
+        }
 
-			project.extra.properties.forEach { (key, value) ->
-				val token = "@$key@"
-				if (result.contains(token)) {
-					val valueString = value.toString()
-					val replacedValue =
-						if (valueString.contains(",")) {
-							valueString.split(",")
-								.map { it.trim() }
-								.filter { it.isNotBlank() }
-								.joinToString(", ") { "\"$it\"" }
-						} else {
-							valueString
-						}
+        // Second pass: generic replacement for extra tokens
+        filter { line: String ->
+            var result = line
 
-					println("	[DEBUG] Replacing token $token with: $replacedValue")
-					result = result.replace(token, replacedValue)
-				}
-			}
+            project.extra.properties.forEach { (key, value) ->
+                val token = "@$key@"
+                if (result.contains(token)) {
+                    val valueString = value.toString()
+                    val replacedValue =
+                        if (valueString.contains(",")) {
+                            valueString
+                                .split(",")
+                                .map { it.trim() }
+                                .filter { it.isNotBlank() }
+                                .joinToString(", ") { "\"$it\"" }
+                        } else {
+                            valueString
+                        }
 
-			result
-		}
+                    println("	[DEBUG] Replacing token $token with: $replacedValue")
+                    result = result.replace(token, replacedValue)
+                }
+            }
 
-		inputs.dir(project.extra["templateDirectory"] as String)
-		inputs.files(
-			rootProject.file("config/config.properties"),
-			rootProject.file("../ios/config/config.properties")
-		)
+            result
+        }
 
-		// Declare every token that appears in templates
-		inputs.property("pluginName", project.extra["pluginName"])
-		inputs.property("pluginNodeName", project.extra["pluginNodeName"])
-		inputs.property("pluginVersion", project.extra["pluginVersion"])
-		inputs.property("pluginPackage", project.extra["pluginPackageName"])
-		inputs.property("androidDependencies", androidDependencies.joinToString())
-		inputs.property("iosPlatformVersion", project.extra["iosPlatformVersion"])
-		inputs.property("iosFrameworks", project.extra["iosFrameworks"])
-		inputs.property("iosEmbeddedFrameworks", project.extra["iosEmbeddedFrameworks"])
-		inputs.property("iosLinkerFlags", project.extra["iosLinkerFlags"])
+        inputs.dir(addonSrcDir)
+        inputs.files(
+            rootProject.file("config/config.properties"),
+            rootProject.file("../ios/config/config.properties"),
+        )
 
-		outputs.dir("${project.extra["outputDir"]}/addons/${project.extra["pluginName"]}")
-	}
+        // Declare every token that appears in templates
+        inputs.property("pluginName", project.extra["pluginName"])
+        inputs.property("pluginNodeName", project.extra["pluginNodeName"])
+        inputs.property("pluginVersion", project.extra["pluginVersion"])
+        inputs.property("pluginPackage", project.extra["pluginPackageName"])
+        inputs.property("androidDependencies", androidDependencies.joinToString())
+        inputs.property("iosPlatformVersion", project.extra["iosPlatformVersion"])
+        inputs.property("iosFrameworks", project.extra["iosFrameworks"])
+        inputs.property("iosEmbeddedFrameworks", project.extra["iosEmbeddedFrameworks"])
+        inputs.property("iosLinkerFlags", project.extra["iosLinkerFlags"])
 
-	register<Copy>("generateiOSConfig") {
-		description = "Copies the iOS plugin config to the output directory and replaces tokens"
+        outputs.dir("${project.extra["outputDir"]}/addons/${project.extra["pluginName"]}")
+    }
 
-		from("${rootProject.projectDir}/../ios/config")
-		into("${project.extra["outputDir"]}/ios/plugins")
+    register<Copy>("generateiOSConfig") {
+        description = "Copies the iOS plugin config to the output directory and replaces tokens"
 
-		include("**/*.gdip")
+        from("${rootProject.projectDir}/../ios/config")
+        into("${project.extra["outputDir"]}/ios/plugins")
 
-		// Explicit tokens map
-		val explicitTokens = mapOf(
-			"pluginName" to (project.extra["pluginName"] as String),
-			"iosInitializationMethod" to (project.extra["iosInitializationMethod"] as String),
-			"iosDeinitializationMethod" to (project.extra["iosDeinitializationMethod"] as String)
-		)
+        include("**/*.gdip")
 
-		eachFile {
-			println("[DEBUG] Processing file: ${relativePath}")
-		}
+        // Explicit tokens map
+        val explicitTokens =
+            mapOf(
+                "pluginName" to (project.extra["pluginName"] as String),
+                "iosInitializationMethod" to (project.extra["iosInitializationMethod"] as String),
+                "iosDeinitializationMethod" to (project.extra["iosDeinitializationMethod"] as String),
+            )
 
-		filter { line: String ->
-			var result = line
-			explicitTokens.forEach { (key, value) ->
-				val token = "@$key@"
-				if (result.contains(token)) {
-					println("	[DEBUG] Replacing token $token with: $value")
-					result = result.replace(token, value)
-				}
-			}
-			result
-		}
+        eachFile {
+            println("[DEBUG] Processing file: $relativePath")
+        }
 
-		inputs.files(
-			rootProject.file("config/config.properties"),
-			rootProject.file("../ios/config/config.properties")
-		)
+        filter { line: String ->
+            var result = line
+            explicitTokens.forEach { (key, value) ->
+                val token = "@$key@"
+                if (result.contains(token)) {
+                    println("	[DEBUG] Replacing token $token with: $value")
+                    result = result.replace(token, value)
+                }
+            }
+            result
+        }
 
-		inputs.property("pluginName", project.extra["pluginName"])
-		inputs.property("iosInitializationMethod", project.extra["iosInitializationMethod"])
-		inputs.property("iosDeinitializationMethod", project.extra["iosDeinitializationMethod"])
+        inputs.files(
+            rootProject.file("config/config.properties"),
+            rootProject.file("../ios/config/config.properties"),
+        )
 
-		outputs.dir("${project.extra["outputDir"]}/ios/plugins")
-	}
+        inputs.property("pluginName", project.extra["pluginName"])
+        inputs.property("iosInitializationMethod", project.extra["iosInitializationMethod"])
+        inputs.property("iosDeinitializationMethod", project.extra["iosDeinitializationMethod"])
 
-	// Ensure generateiOSConfig always runs after generateGDScript
-	// (token replacement order matters for the final plugin files)
-	named<Copy>("generateiOSConfig") {
-		mustRunAfter("generateGDScript")
-	}
+        outputs.dir("${project.extra["outputDir"]}/ios/plugins")
+    }
+
+    // Ensure generateiOSConfig always runs after generateGDScript
+    named<Copy>("generateiOSConfig") {
+        mustRunAfter("generateGDScript")
+    }
+
+    val gdscriptFormatExcludes =
+        listOf(
+            "**/*Plugin.gd",
+        )
+
+    register<Exec>("checkGdscriptFormat") {
+        description = "Checks gdscript-formatter compliance of GDScript source files (dry-run, no changes written)"
+        group = "formatting"
+
+        val gdformatrcSource = file("$projectDir/../.github/config/.gdformatrc")
+        val gdformatrcDest = addonSrcDir.resolve(".gdformatrc")
+        workingDir = addonSrcDir
+
+        doFirst {
+            copy {
+                from(gdformatrcSource)
+                into(addonSrcDir)
+                println("[DEBUG] Copied $gdformatrcSource into $addonSrcDir")
+            }
+
+            val sourceFiles =
+                (
+                    fileTree(addonSrcDir) {
+                        include("**/*.gd")
+                        gdscriptFormatExcludes.forEach { exclude(it) }
+                    } +
+                        fileTree("${rootProject.projectDir}/../demo") {
+                            include("**/*.gd")
+                            exclude("addons/**")
+                        }
+                ).files
+                    .map { it.relativeTo(addonSrcDir).path }
+                    .sorted()
+
+            if (sourceFiles.isEmpty()) {
+                throw GradleException("checkGdscriptFormat: no source files found under ${addonSrcDir.absolutePath}")
+            }
+
+            commandLine(
+                buildList {
+                    add("gdformat")
+                    add("--check")
+                    addAll(sourceFiles)
+                },
+            )
+        }
+
+        doLast {
+            if (gdformatrcDest.exists()) {
+                gdformatrcDest.delete()
+                println("[DEBUG] Deleted $gdformatrcDest")
+            }
+        }
+    }
+
+    register<Exec>("formatGdscriptSource") {
+        description = "Formats GDScript source files in-place using gdscript-formatter"
+        group = "formatting"
+
+        val gdformatrcSource = file("$projectDir/../.github/config/.gdformatrc")
+        val gdformatrcDest = addonSrcDir.resolve(".gdformatrc")
+        workingDir = addonSrcDir
+
+        doFirst {
+            copy {
+                from(gdformatrcSource)
+                into(addonSrcDir)
+                println("[DEBUG] Copied $gdformatrcSource into $addonSrcDir")
+            }
+
+            val sourceFiles =
+                (
+                    fileTree(addonSrcDir) {
+                        include("**/*.gd")
+                        gdscriptFormatExcludes.forEach { exclude(it) }
+                    } +
+                        fileTree("${rootProject.projectDir}/../demo") {
+                            include("**/*.gd")
+                            exclude("addons/**")
+                        }
+                ).files
+                    .map { it.relativeTo(addonSrcDir).path }
+                    .sorted()
+
+            if (sourceFiles.isEmpty()) {
+                throw GradleException("formatGdscriptSource: no source files found under ${addonSrcDir.absolutePath}")
+            }
+
+            commandLine(
+                buildList {
+                    add("gdformat")
+                    addAll(sourceFiles)
+                },
+            )
+        }
+
+        doLast {
+            if (gdformatrcDest.exists()) {
+                gdformatrcDest.delete()
+                println("[DEBUG] Deleted $gdformatrcDest")
+            }
+        }
+    }
 }

@@ -1,0 +1,41 @@
+#
+# © 2026-present https://github.com/cengiz-pz
+#
+
+name: iOS Code Style
+
+on:
+  pull_request:
+    branches: [ main ]
+    paths:
+      - 'ios/src/**/*.m'
+      - 'ios/src/**/*.mm'
+      - 'ios/src/**/*.h'
+      - 'ios/src/**/*.swift'
+
+jobs:
+  ios-style:
+    runs-on: macos-latest
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Install SwiftLint
+        run: brew install swiftlint
+
+      - name: Install clang-format
+        run: brew install clang-format
+
+      - name: Run SwiftLint
+        run: find ios/src \( -name "*.swift" \) | xargs swiftlint lint --config "$GITHUB_WORKSPACE/.github/config/.swiftlint.yml"
+
+      - name: Run clang-format check
+        run: |
+          find ios/src \( -name "*.m" -o -name "*.mm" -o -name "*.h" \) \
+          -exec clang-format --style=file:.github/config/.clang-format --dry-run --Werror {} +
+
+      - name: Install editorconfig-checker
+        run: brew install editorconfig-checker
+
+      - name: Verify EditorConfig (Final Newline & Trailing Space)
+        run: find ios/src \( -name "*.m" -o -name "*.mm" -o -name "*.h" -o -name "*.swift" \) | xargs editorconfig-checker
