@@ -291,7 +291,8 @@ public class NotificationSchedulerPlugin extends GodotPlugin {
 						+ Build.VERSION.SDK_INT);
 			}
 		} catch (Exception e) {
-			Log.e(LOG_TAG, "request_post_notifications_permission():: Failed to request permission due to " + e.getMessage());
+			Log.e(LOG_TAG, "request_post_notifications_permission():: Failed to request permission due to "
+					+ e.getMessage());
 		}
 
 		return Error.OK.toNativeValue();
