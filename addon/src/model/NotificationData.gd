@@ -13,8 +13,8 @@ const DATA_KEY_LARGE_ICON_NAME = "large_icon_name"
 const DATA_KEY_DELAY = "delay"
 const DATA_KEY_DEEPLINK = "deeplink"
 const DATA_KEY_INTERVAL = "interval"
-const DATA_KEY_BADGE_COUNT= "badge_count"
-const DATA_KEY_CUSTOM_DATA= "custom_data"
+const DATA_KEY_BADGE_COUNT = "badge_count"
+const DATA_KEY_CUSTOM_DATA = "custom_data"
 
 const OPTION_KEY_RESTART_APP = "restart_app"
 

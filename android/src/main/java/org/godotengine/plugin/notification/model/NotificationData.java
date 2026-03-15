@@ -33,7 +33,8 @@ import org.godotengine.plugin.notification.ResultActivity;
 
 
 public class NotificationData {
-	private static final String LOG_TAG = NotificationSchedulerPlugin.LOG_TAG + "::" + NotificationData.class.getSimpleName();
+	private static final String LOG_TAG = NotificationSchedulerPlugin.LOG_TAG + "::"
+			+ NotificationData.class.getSimpleName();
 
 	public static final String DATA_KEY_ID = "notification_id";
 	public static final String DATA_KEY_CHANNEL_ID = "channel_id";
@@ -44,7 +45,7 @@ public class NotificationData {
 	public static final String DATA_KEY_DELAY = "delay";
 	public static final String DATA_KEY_DEEPLINK = "deeplink";
 	public static final String DATA_KEY_INTERVAL = "interval";
-	public static final String DATA_KEY_BADGE_COUNT= "badge_count";
+	public static final String DATA_KEY_BADGE_COUNT = "badge_count";
 	public static final String DATA_KEY_CUSTOM_DATA = "custom_data";
 
 	public static final String OPTION_KEY_RESTART_APP = "restart_app";
@@ -235,7 +236,7 @@ public class NotificationData {
 	public Integer getBadgeCount() {
 		return (data.containsKey(DATA_KEY_BADGE_COUNT)) ? toInteger(data.get(DATA_KEY_BADGE_COUNT)) : 0;
 	}
-	
+
 	/**
 	 * Safely convert Object to Integer, handling both Integer and Long types
 	 */
@@ -362,27 +363,35 @@ public class NotificationData {
 		}
 
 		if (Build.VERSION.SDK_INT > Build.VERSION_CODES.TIRAMISU &&
-				ActivityCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
-			Log.w(LOG_TAG, "buildNotification():: unable to build notification as " + Manifest.permission.POST_NOTIFICATIONS
+				ActivityCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) !=
+				PackageManager.PERMISSION_GRANTED) {
+			Log.w(LOG_TAG, "buildNotification():: unable to build notification as "
+					+ Manifest.permission.POST_NOTIFICATIONS
 					+ " permission is not granted");
 			return null;
 		}
 
 		Intent notificationActionIntent = new Intent(context, ResultActivity.class);
-		notificationActionIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NO_HISTORY);
+		notificationActionIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK
+				| Intent.FLAG_ACTIVITY_NO_HISTORY);
 		this.populateIntent(notificationActionIntent);
 
 		Intent onDismissIntent = new Intent(context, CancelNotificationReceiver.class);
 		this.populateIntent(onDismissIntent);
-		PendingIntent onDismissPendingIntent = PendingIntent.getBroadcast(context, 0, onDismissIntent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
-		Log.i(LOG_TAG, String.format("%s():: received notification id:'%d' - channel id:%s - title:'%s' - content:'%s' - small icon name:'%s",
-				"onReceive", this.getId(), this.getChannelId(), this.getTitle(), this.getContent(), this.getSmallIconName()));
+		PendingIntent onDismissPendingIntent = PendingIntent.getBroadcast(context, 0, onDismissIntent,
+				PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
+		Log.i(LOG_TAG, String.format("%s():: received notification id:'%d' - channel id:%s - title:'%s' - "
+				+ "content:'%s' - small icon name:'%s",
+				"onReceive", this.getId(), this.getChannelId(), this.getTitle(), this.getContent(),
+				this.getSmallIconName()));
 
-		PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, notificationActionIntent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
+		PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, notificationActionIntent,
+				PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
 
 		Resources resources = context.getResources();
 		NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(context, this.getChannelId())
-				.setSmallIcon(resources.getIdentifier(this.getSmallIconName(), ICON_RESOURCE_TYPE, context.getPackageName()))
+				.setSmallIcon(resources.getIdentifier(this.getSmallIconName(), ICON_RESOURCE_TYPE,
+						context.getPackageName()))
 				.setContentTitle(this.getTitle())
 				.setContentText(this.getContent())
 				.setPriority(NotificationCompat.PRIORITY_DEFAULT)
@@ -392,8 +401,9 @@ public class NotificationData {
 				.setAutoCancel(true);
 
 		if (this.hasLargeIconName()) {
-			int largeIconId = resources.getIdentifier(this.getLargeIconName(), ICON_RESOURCE_TYPE, context.getPackageName());
-			
+			int largeIconId = resources.getIdentifier(this.getLargeIconName(), ICON_RESOURCE_TYPE,
+					context.getPackageName());
+
 			if (largeIconId != 0) {
 				// Use Context to load the drawable (supports Vectors correctly)
 				Drawable drawable = null;
@@ -429,10 +439,10 @@ public class NotificationData {
 		// Handle VectorDrawables and other XML drawables
 		int width = drawable.getIntrinsicWidth();
 		int height = drawable.getIntrinsicHeight();
-		
+
 		// Default to a square if intrinsic size is missing (edge case for some XML shapes)
 		if (width <= 0 || height <= 0) {
-			width = DEFAULT_LARGE_ICON_WIDTH; 
+			width = DEFAULT_LARGE_ICON_WIDTH;
 			height = DEFAULT_LARGE_ICON_HEIGHT;
 		}
 

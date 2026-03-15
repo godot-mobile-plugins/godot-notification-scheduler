@@ -6,7 +6,7 @@
 @icon("icon.png")
 class_name NotificationScheduler extends Node
 
-signal initialization_completed()
+signal initialization_completed
 
 signal post_notifications_permission_granted(permission_name: String)
 signal post_notifications_permission_denied(permission_name: String)
@@ -41,12 +41,24 @@ func _connect_signals() -> void:
 	_plugin_singleton.connect(INITIALIZATION_COMPLETED_SIGNAL_NAME, _on_initialization_completed)
 	_plugin_singleton.connect(NOTIFICATION_OPENED_SIGNAL_NAME, _on_notification_opened)
 	_plugin_singleton.connect(NOTIFICATION_DISMISSED_SIGNAL_NAME, _on_notification_dismissed)
-	_plugin_singleton.connect(POST_NOTIFICATIONS_PERMISSION_GRANTED_SIGNAL_NAME, _on_post_notifications_permission_granted)
-	_plugin_singleton.connect(POST_NOTIFICATIONS_PERMISSION_DENIED_SIGNAL_NAME, _on_post_notifications_permission_denied)
-	_plugin_singleton.connect(BATTERY_OPTIMIZATIONS_PERMISSION_GRANTED_SIGNAL_NAME, _on_battery_optimizations_permission_granted)
-	_plugin_singleton.connect(BATTERY_OPTIMIZATIONS_PERMISSION_DENIED_SIGNAL_NAME, _on_battery_optimizations_permission_denied)
-	_plugin_singleton.connect(SCHEDULE_EXACT_ALARM_PERMISSION_GRANTED_SIGNAL_NAME, _on_schedule_exact_alarm_permission_granted)
-	_plugin_singleton.connect(SCHEDULE_EXACT_ALARM_PERMISSION_DENIED_SIGNAL_NAME, _on_schedule_exact_alarm_permission_denied)
+	_plugin_singleton.connect(
+		POST_NOTIFICATIONS_PERMISSION_GRANTED_SIGNAL_NAME, _on_post_notifications_permission_granted
+	)
+	_plugin_singleton.connect(
+		POST_NOTIFICATIONS_PERMISSION_DENIED_SIGNAL_NAME, _on_post_notifications_permission_denied
+	)
+	_plugin_singleton.connect(
+		BATTERY_OPTIMIZATIONS_PERMISSION_GRANTED_SIGNAL_NAME, _on_battery_optimizations_permission_granted
+	)
+	_plugin_singleton.connect(
+		BATTERY_OPTIMIZATIONS_PERMISSION_DENIED_SIGNAL_NAME, _on_battery_optimizations_permission_denied
+	)
+	_plugin_singleton.connect(
+		SCHEDULE_EXACT_ALARM_PERMISSION_GRANTED_SIGNAL_NAME, _on_schedule_exact_alarm_permission_granted
+	)
+	_plugin_singleton.connect(
+		SCHEDULE_EXACT_ALARM_PERMISSION_DENIED_SIGNAL_NAME, _on_schedule_exact_alarm_permission_denied
+	)
 
 
 func initialize() -> void:

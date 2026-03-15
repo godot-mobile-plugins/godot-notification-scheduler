@@ -5,8 +5,8 @@
 #ifndef notification_scheduler_plugin_h
 #define notification_scheduler_plugin_h
 
-#include "core/object/object.h"
 #include "core/object/class_db.h"
+#include "core/object/object.h"
 
 #import "notification_data.h"
 #import "nsp_service.h"
@@ -25,21 +25,21 @@ class NotificationSchedulerPlugin : public Object {
 	GDCLASS(NotificationSchedulerPlugin, Object);
 
 private:
-	static NotificationSchedulerPlugin* instance;
+	static NotificationSchedulerPlugin *instance;
 	int lastReceivedNotificationId;
 	UNAuthorizationStatus authorizationStatus;
-	NSPService* service;
+	NSPService *service;
 	bool is_initialized; // Track initialization state
 
 	static void _bind_methods();
 	void _process_queued_notifications();
-	void _remove_notification_from_cache(NotificationData* notificationData, NSString* notificationTypeDesc = @"");
-	void _remove_notification_from_UNC(NotificationData* notificationData);
-	void schedule_notification(NotificationData* notificationData);
-	void schedule_repeating_sequence(NotificationData* notificationData, int count);
+	void _remove_notification_from_cache(NotificationData *notificationData, NSString *notificationTypeDesc = @"");
+	void _remove_notification_from_UNC(NotificationData *notificationData);
+	void schedule_notification(NotificationData *notificationData);
+	void schedule_repeating_sequence(NotificationData *notificationData, int count);
 
 public:
-	static NotificationSchedulerPlugin* get_singleton();
+	static NotificationSchedulerPlugin *get_singleton();
 
 	// Plugin methods
 	Error initialize();
@@ -57,7 +57,7 @@ public:
 	Error open_app_info_settings();
 
 	// Internal methods
-	void handle_completion(NSString* notificationId);
+	void handle_completion(NSString *notificationId);
 	void emit_notification_event(const String &p_signal, NSString *p_notification_id);
 
 	NotificationSchedulerPlugin();

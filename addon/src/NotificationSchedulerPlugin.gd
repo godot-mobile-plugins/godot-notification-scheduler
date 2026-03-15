@@ -57,7 +57,8 @@ class AndroidExportPlugin extends EditorExportPlugin:
 
 	func _export_begin(_features: PackedStringArray, _is_debug: bool, path: String, _flags: int) -> void:
 		if not DirAccess.dir_exists_absolute(PLUGIN_ASSETS_DIRECTORY):
-			NotificationScheduler.log_error("Error: %s's assets directory not found! \"%s\"" % [PLUGIN_NAME, PLUGIN_ASSETS_DIRECTORY])
+			NotificationScheduler.log_error("Error: %s's assets directory not found! \"%s\""
+					% [PLUGIN_NAME, PLUGIN_ASSETS_DIRECTORY])
 		else:
 			# copy notification assets
 			_copy(PLUGIN_ASSETS_DIRECTORY, ANDROID_RES_DIRECTORY)
@@ -118,7 +119,8 @@ class AndroidExportPlugin extends EditorExportPlugin:
 		if not DirAccess.dir_exists_absolute(__base_path):
 			var __result: int = DirAccess.make_dir_recursive_absolute(__base_path)
 			if __result != OK:
-				NotificationScheduler.log_error("Error %d when creating destination path \"%s\". Skipping." % [__result, __base_path])
+				NotificationScheduler.log_error("Error %d when creating destination path \"%s\". Skipping."
+						% [__result, __base_path])
 				return
 
 		if DirAccess.dir_exists_absolute(a_source_path):

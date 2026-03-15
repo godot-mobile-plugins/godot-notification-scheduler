@@ -9,10 +9,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
-import org.godotengine.plugin.notification.model.NotificationData;
-
 public class BootReceiver extends BroadcastReceiver {
-	private static final String LOG_TAG = NotificationSchedulerPlugin.LOG_TAG + "::" + BootReceiver.class.getSimpleName();
+	private static final String LOG_TAG = NotificationSchedulerPlugin.LOG_TAG + "::"
+			+ BootReceiver.class.getSimpleName();
 
 	@Override
 	public void onReceive(Context context, Intent intent) {

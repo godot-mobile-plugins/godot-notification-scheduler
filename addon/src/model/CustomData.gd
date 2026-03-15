@@ -4,7 +4,6 @@
 
 class_name CustomData extends RefCounted
 
-
 var _data: Dictionary
 
 

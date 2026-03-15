@@ -14,23 +14,23 @@ extends Node
 @export var notification_title: String = "Godot Notification Scheduler Demo"
 @export var notification_text: String = "This is a demo notification. Have you received it?"
 
-@onready var notification_scheduler: NotificationScheduler = $NotificationScheduler as NotificationScheduler
-@onready var _label: RichTextLabel = $CanvasLayer/MainContainer/VBoxContainer/RichTextLabel as RichTextLabel
-@onready var _delay_slider: HSlider = $CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/HBoxContainer/DelayHSlider as HSlider
-@onready var _delay_value_label: Label = $CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/HBoxContainer/ValueLabel as Label
-@onready var _interval_checkbox: CheckBox = $CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/IntervalHBoxContainer/IntervalCheckBox as CheckBox
-@onready var _interval_slider: HSlider = $CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/IntervalHBoxContainer/IntervalHSlider as HSlider
-@onready var _interval_value_label: Label = $CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/IntervalHBoxContainer/ValueLabel as Label
-@onready var _notification_permission_button: Button = $CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/PermissionsVBoxContainer/PermissionHBoxContainer/NotificationPermissionButton as Button
-@onready var _optimization_permission_button: Button = $CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/PermissionsVBoxContainer/PermissionHBoxContainer/OptimizationPermissionButton as Button
-@onready var _exact_alarm_permission_button: Button = $CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/PermissionsVBoxContainer/PermissionHBoxContainer/ExactAlarmButton as Button
-@onready var _restart_checkbox: CheckBox = $CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/RestartCheckBox as CheckBox
-@onready var _badge_count_slider: HSlider = $CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/BadgeCountHBoxContainer/BadgeCountHSlider as HSlider
-@onready var _badge_count_value_label: Label = $CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/BadgeCountHBoxContainer/ValueLabel as Label
-@onready var _badge_count_checkbox: CheckBox = $CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/BadgeCountHBoxContainer/CheckBox as CheckBox
-@onready var _id_value_label: Label = $CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/ActionHBoxContainer/IdValueLabel as Label
-@onready var _android_texture_rect: TextureRect = $CanvasLayer/MainContainer/VBoxContainer/HBoxContainer/AndroidTextureRect as TextureRect
-@onready var _ios_texture_rect: TextureRect = $CanvasLayer/MainContainer/VBoxContainer/HBoxContainer/iOSTextureRect as TextureRect
+@onready var notification_scheduler := $NotificationScheduler as NotificationScheduler
+@onready var _label := $CanvasLayer/MainContainer/VBoxContainer/RichTextLabel as RichTextLabel
+@onready var _delay_slider := %DelayHSlider as HSlider
+@onready var _delay_value_label := %DelayValueLabel as Label
+@onready var _interval_checkbox := %IntervalCheckBox as CheckBox
+@onready var _interval_slider := %IntervalHSlider as HSlider
+@onready var _interval_value_label := %IntervalValueLabel as Label
+@onready var _notification_permission_button := %NotificationPermissionButton as Button
+@onready var _optimization_permission_button := %OptimizationPermissionButton as Button
+@onready var _exact_alarm_permission_button := %ExactAlarmButton as Button
+@onready var _restart_checkbox := %RestartCheckBox as CheckBox
+@onready var _badge_count_slider := %BadgeCountHBoxContainer/BadgeCountHSlider as HSlider
+@onready var _badge_count_value_label := %BadgeCountHBoxContainer/ValueLabel as Label
+@onready var _badge_count_checkbox := %BadgeCountHBoxContainer/CheckBox as CheckBox
+@onready var _id_value_label := %IdValueLabel as Label
+@onready var _android_texture_rect := %AndroidTextureRect as TextureRect
+@onready var _ios_texture_rect := %iOSTextureRect as TextureRect
 
 var _active_texture_rect: TextureRect
 
@@ -51,7 +51,9 @@ func _ready() -> void:
 	_badge_count_value_label.text = str(int(_badge_count_slider.value))
 
 	_id_value_label.text = str(_notification_id)
-	var __popup_menu: PopupMenu = $CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/ActionHBoxContainer/MenuButton.get_popup()
+	var __popup_menu: PopupMenu = (
+		$CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/ActionHBoxContainer/MenuButton.get_popup()
+	)
 	__popup_menu.id_pressed.connect(_on_notification_id_selected)
 
 	notification_scheduler.initialize()
@@ -82,11 +84,15 @@ func _on_notification_scheduler_initialization_completed() -> void:
 func _create_channel() -> void:
 	_print_to_screen("Creating notification channel...")
 	var __result = notification_scheduler.create_notification_channel(
-			NotificationChannel.new()
-					.set_id(channel_id)
-					.set_name(channel_name)
-					.set_description(channel_description)
-					.set_importance(channel_importance))
+		(
+			NotificationChannel
+			. new()
+			. set_id(channel_id)
+			. set_name(channel_name)
+			. set_description(channel_description)
+			. set_importance(channel_importance)
+		)
+	)
 
 	if __result == OK:
 		_print_to_screen("Channel '%s' created successfully!" % channel_id)
@@ -108,16 +114,20 @@ func _create_channel() -> void:
 func _ensure_channel_exists() -> bool:
 	if _channel_created:
 		return true  # Channel already verified as existing
-	
+
 	# Try to create the channel
 	_print_to_screen("Ensuring notification channel exists...")
 	var result = notification_scheduler.create_notification_channel(
-			NotificationChannel.new()
-					.set_id(channel_id)
-					.set_name(channel_name)
-					.set_description(channel_description)
-					.set_importance(channel_importance))
-	
+		(
+			NotificationChannel
+			. new()
+			. set_id(channel_id)
+			. set_name(channel_name)
+			. set_description(channel_description)
+			. set_importance(channel_importance)
+		)
+	)
+
 	if result == OK or result == ERR_ALREADY_EXISTS:
 		_channel_created = true
 		_print_to_screen("✓ Channel verified")
@@ -129,7 +139,7 @@ func _ensure_channel_exists() -> bool:
 
 func _on_notification_id_selected(a_notification_id: int) -> void:
 	_notification_id = a_notification_id
-	$CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/ActionHBoxContainer/IdValueLabel.text = str(a_notification_id)
+	%IdValueLabel.text = str(a_notification_id)
 
 
 func _on_send_button_pressed() -> void:
@@ -137,13 +147,16 @@ func _on_send_button_pressed() -> void:
 	if not _ensure_channel_exists():
 		_print_to_screen("Cannot schedule notification: Channel not available!", true)
 		return
-	
-	var __notification_data = NotificationData.new()\
-			.set_id(_notification_id)\
-			.set_channel_id(channel_id)\
-			.set_title(notification_title)\
-			.set_content(notification_text)\
-			.set_delay(roundi(_delay_slider.value))
+
+	var __notification_data = (
+		NotificationData
+		. new()
+		. set_id(_notification_id)
+		. set_channel_id(channel_id)
+		. set_title(notification_title)
+		. set_content(notification_text)
+		. set_delay(roundi(_delay_slider.value))
+	)
 
 	if _interval_checkbox.button_pressed:
 		__notification_data.set_interval(roundi(_interval_slider.value))
@@ -155,14 +168,25 @@ func _on_send_button_pressed() -> void:
 		__notification_data.set_badge_count(roundi(_badge_count_slider.value))
 
 	__notification_data.set_large_icon_name(NotificationScheduler.DEFAULT_ICON_NAME)
-	__notification_data.set_custom_data(CustomData.new().set_int_property("my_test_int", 14)
-			.set_string_property("my_test_string", "just testing"))
+	__notification_data.set_custom_data(
+		CustomData.new().set_int_property("my_test_int", 14).set_string_property("my_test_string", "just testing")
+	)
 
-	_print_to_screen("Scheduling notification %d with%s a delay of %d seconds (badge count: %d)"
-			% [_notification_id,
-			(" an interval of %d seconds and" % int(_interval_slider.value)) if _interval_checkbox.button_pressed else "",
-			int(_delay_slider.value),
-			roundi(_badge_count_slider.value)])
+	_print_to_screen(
+		(
+			"Scheduling notification %d with%s a delay of %d seconds (badge count: %d)"
+			% [
+				_notification_id,
+				(
+					(" an interval of %d seconds and" % int(_interval_slider.value))
+					if _interval_checkbox.button_pressed
+					else ""
+				),
+				int(_delay_slider.value),
+				roundi(_badge_count_slider.value)
+			]
+		)
+	)
 
 	notification_scheduler.schedule(__notification_data)
 
@@ -241,14 +265,18 @@ func _on_notification_scheduler_schedule_exact_alarm_permission_denied(permissio
 func _on_notification_scheduler_notification_opened(a_notification: NotificationData) -> void:
 	_print_to_screen("Notification %d opened" % a_notification.get_id())
 	_print_to_screen("CustomData.my_test_int: %d" % a_notification.get_custom_data().get_int_property("my_test_int"))
-	_print_to_screen("CustomData.my_test_string: %s" % a_notification.get_custom_data().get_string_property("my_test_string"))
+	_print_to_screen(
+		"CustomData.my_test_string: %s" % a_notification.get_custom_data().get_string_property("my_test_string")
+	)
 	notification_scheduler.set_badge_count(0)
 
 
 func _on_notification_scheduler_notification_dismissed(a_notification: NotificationData) -> void:
 	_print_to_screen("Notification %d dismissed" % a_notification.get_id())
 	_print_to_screen("CustomData.my_test_int: %d" % a_notification.get_custom_data().get_int_property("my_test_int"))
-	_print_to_screen("CustomData.my_test_string: %s" % a_notification.get_custom_data().get_string_property("my_test_string"))
+	_print_to_screen(
+		"CustomData.my_test_string: %s" % a_notification.get_custom_data().get_string_property("my_test_string")
+	)
 	notification_scheduler.set_badge_count(0)
 
 
