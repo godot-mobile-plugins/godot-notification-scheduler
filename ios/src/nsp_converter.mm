@@ -90,7 +90,14 @@
 	if (!nsString) {
 		return String();
 	}
-	return String([nsString UTF8String]);
+	const char *utf8 = [nsString UTF8String];
+	if (!utf8) {
+		return String();
+	}
+	// String(const char*) copies each byte as a raw char32_t and does NOT
+	// parse UTF-8 multibyte sequences.  String::utf8() is the correct API
+	// for converting a UTF-8 C string into a proper Godot String.
+	return String::utf8(utf8);
 }
 
 + (Dictionary)toGodotDictionary:(NSDictionary *)nsDictionary {

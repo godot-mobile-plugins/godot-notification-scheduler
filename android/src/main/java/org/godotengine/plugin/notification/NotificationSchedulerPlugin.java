@@ -288,7 +288,7 @@ public class NotificationSchedulerPlugin extends GodotPlugin {
 			} else {
 				Log.i(LOG_TAG,
 						"request_post_notifications_permission():: can't request permission, because SDK version is "
-						+ Build.VERSION.SDK_INT);
+								+ Build.VERSION.SDK_INT);
 			}
 		} catch (Exception e) {
 			Log.e(LOG_TAG, "request_post_notifications_permission():: Failed to request permission due to "
@@ -755,7 +755,7 @@ public class NotificationSchedulerPlugin extends GodotPlugin {
 	}
 
 	private static void scheduleRepeatingNotification(Context context, NotificationData notificationData,
-			long fireTime) {
+													long fireTime) {
 		int notificationId = notificationData.getId();
 
 		Intent intent = new Intent(context, NotificationReceiver.class);

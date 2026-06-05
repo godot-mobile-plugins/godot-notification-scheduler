@@ -364,7 +364,7 @@ public class NotificationData {
 
 		if (Build.VERSION.SDK_INT > Build.VERSION_CODES.TIRAMISU &&
 				ActivityCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) !=
-				PackageManager.PERMISSION_GRANTED) {
+						PackageManager.PERMISSION_GRANTED) {
 			Log.w(LOG_TAG, "buildNotification():: unable to build notification as "
 					+ Manifest.permission.POST_NOTIFICATIONS
 					+ " permission is not granted");

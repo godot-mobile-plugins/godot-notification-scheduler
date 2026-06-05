@@ -1,0 +1,350 @@
+{
+	"version": "1.0",
+	"admob": {
+		"name": "AdMob Plugin",
+		"directory": "AdmobPlugin",
+		"description": "A Godot mobile plugin for integrating Google AdMob into your Godot games. This plugin allows you to display various types of ads, such as banner ads, interstitial ads, and rewarded video ads, to monetize your mobile games effectively.",
+		"author": "Godot Mobile Plugins (github.com/godot-mobile-plugins)",
+		"repository": "https://github.com/godot-sdk-integrations/godot-admob",
+		"versions": [
+			{
+				"version": "7.0",
+				"min_godot": "4.7",
+				"ios": true,
+				"android": true,
+				"multi": true
+			},
+			{
+				"version": "6.0",
+				"min_godot": "4.6",
+				"max_godot": "4.6.3",
+				"ios": true,
+				"android": true,
+				"multi": true
+			},
+			{
+				"version": "5.3",
+				"min_godot": "4.5",
+				"max_godot": "4.5.2",
+				"ios": true,
+				"android": true,
+				"multi": true
+			}
+		],
+		"sponsorship_url": "https://github.com/sponsors/cengiz-pz"
+	},
+	"connection_state": {
+		"name": "Connection State Plugin",
+		"directory": "ConnectionStatePlugin",
+		"description": "A Godot mobile plugin for managing connection states in your Godot games. This plugin provides a simple and efficient way to check the network connection status, allowing you to handle online and offline scenarios gracefully in your mobile games.",
+		"author": "Godot Mobile Plugins (github.com/godot-mobile-plugins)",
+		"repository": "https://github.com/godot-mobile-plugins/godot-connection-state",
+		"versions": [
+			{
+				"version": "1.2",
+				"min_godot": "4.7",
+				"ios": true,
+				"android": true,
+				"multi": true
+			},
+			{
+				"version": "1.1",
+				"min_godot": "4.6",
+				"max_godot": "4.6.3",
+				"ios": true,
+				"android": true,
+				"multi": true
+			},
+			{
+				"version": "1.0",
+				"min_godot": "4.5",
+				"max_godot": "4.5.2",
+				"ios": true,
+				"android": true,
+				"multi": true
+			}
+		],
+		"sponsorship_url": "https://github.com/sponsors/cengiz-pz"
+	},
+	"deeplink": {
+		"name": "Deeplink Plugin",
+		"directory": "DeeplinkPlugin",
+		"description": "A Godot mobile plugin for handling deep links in your Godot games. This plugin allows you to capture and process deep link URLs, enabling seamless integration with external services and improved user experience.",
+		"author": "Godot Mobile Plugins (github.com/godot-mobile-plugins)",
+		"repository": "https://github.com/godot-mobile-plugins/godot-deeplink",
+		"versions": [
+			{
+				"version": "6.0",
+				"min_godot": "4.7",
+				"ios": true,
+				"android": true,
+				"multi": true
+			},
+			{
+				"version": "5.3",
+				"min_godot": "4.6",
+				"max_godot": "4.6.3",
+				"ios": true,
+				"android": true,
+				"multi": true
+			},
+			{
+				"version": "5.2",
+				"min_godot": "4.5",
+				"max_godot": "4.5.2",
+				"ios": true,
+				"android": true,
+				"multi": true
+			}
+		],
+		"sponsorship_url": "https://github.com/sponsors/cengiz-pz"
+	},
+	"firebase": {
+		"name": "Firebase Plugin",
+		"directory": "FirebasePlugin",
+		"description": "A Godot mobile plugin for integrating Firebase services into your Godot games. This plugin provides seamless integration with Firebase Authentication, Firestore, and other Firebase features, enabling powerful backend functionality for your mobile games.",
+		"author": "Godot Mobile Plugins (github.com/godot-mobile-plugins)",
+		"repository": "https://github.com/godot-mobile-plugins/godot-firebase",
+		"versions": [
+			{
+				"version": "1.0",
+				"min_godot": "4.7",
+				"ios": true,
+				"android": true,
+				"multi": true
+			}
+		],
+		"sponsorship_url": "https://github.com/sponsors/cengiz-pz"
+	},
+	"inapp_review": {
+		"name": "In-App Review Plugin",
+		"directory": "InappReviewPlugin",
+		"description": "A Godot mobile plugin for handling in-app reviews in your Godot games. This plugin allows you to request and display in-app review prompts, encouraging users to rate and review your mobile games.",
+		"author": "Godot Mobile Plugins (github.com/godot-mobile-plugins)",
+		"repository": "https://github.com/godot-mobile-plugins/godot-inapp-review",
+		"versions": [
+			{
+				"version": "5.3",
+				"min_godot": "4.7",
+				"ios": true,
+				"android": true,
+				"multi": true
+			},
+			{
+				"version": "5.2",
+				"min_godot": "4.6",
+				"max_godot": "4.6.3",
+				"ios": true,
+				"android": true,
+				"multi": true
+			},
+			{
+				"version": "5.1",
+				"min_godot": "4.5",
+				"max_godot": "4.5.2",
+				"ios": true,
+				"android": true,
+				"multi": true
+			}
+		],
+		"sponsorship_url": "https://github.com/sponsors/cengiz-pz"
+	},
+	"native_camera": {
+		"name": "Native Camera Plugin",
+		"directory": "NativeCameraPlugin",
+		"description": "A Godot mobile plugin for accessing the native camera functionality in your Godot games. This plugin provides a simple and efficient way to capture photos and record videos directly from your mobile devices.",
+		"author": "Godot Mobile Plugins (github.com/godot-mobile-plugins)",
+		"repository": "https://github.com/godot-mobile-plugins/godot-native-camera",
+		"versions": [
+			{
+				"version": "3.0",
+				"min_godot": "4.7",
+				"ios": true,
+				"android": true,
+				"multi": true
+			},
+			{
+				"version": "1.1",
+				"min_godot": "4.6",
+				"max_godot": "4.6.3",
+				"ios": true,
+				"android": true,
+				"multi": true
+			},
+			{
+				"version": "1.0",
+				"min_godot": "4.5",
+				"max_godot": "4.5.2",
+				"ios": true,
+				"android": true,
+				"multi": true
+			}
+		],
+		"sponsorship_url": "https://github.com/sponsors/cengiz-pz"
+	},
+	"notification_scheduler": {
+		"name": "Notification Scheduler Plugin",
+		"directory": "NotificationSchedulerPlugin",
+		"description": "A Godot mobile plugin for scheduling notifications in your Godot games. This plugin allows you to set up and manage notifications, ensuring that players are informed about important events and updates.",
+		"author": "Godot Mobile Plugins (github.com/godot-mobile-plugins)",
+		"repository": "https://github.com/godot-mobile-plugins/godot-notification-scheduler",
+		"versions": [
+			{
+				"version": "5.3",
+				"min_godot": "4.7",
+				"ios": true,
+				"android": true,
+				"multi": true
+			},
+			{
+				"version": "5.2",
+				"min_godot": "4.6",
+				"max_godot": "4.6.3",
+				"ios": true,
+				"android": true,
+				"multi": true
+			},
+			{
+				"version": "5.1",
+				"min_godot": "4.5",
+				"max_godot": "4.5.2",
+				"ios": true,
+				"android": true,
+				"multi": true
+			},
+			{
+				"version": "5.0",
+				"min_godot": "4.4",
+				"max_godot": "4.4.1",
+				"ios": true,
+				"android": true,
+				"multi": true
+			}
+		],
+		"sponsorship_url": "https://github.com/sponsors/cengiz-pz"
+	},
+	"oauth2": {
+		"name": "OAuth2 Plugin",
+		"directory": "OAuth2Plugin",
+		"description": "A Godot mobile plugin for integrating OAuth2 authentication into your Godot games. This plugin provides a simple and efficient way to handle OAuth2 flows, enabling seamless integration with various OAuth2 providers.",
+		"author": "Godot Mobile Plugins (github.com/godot-mobile-plugins)",
+		"repository": "https://github.com/godot-mobile-plugins/godot-oauth2",
+		"versions": [
+			{
+				"version": "2.0",
+				"min_godot": "4.7",
+				"ios": true,
+				"android": true,
+				"multi": true
+			},
+			{
+				"version": "1.1",
+				"min_godot": "4.6",
+				"max_godot": "4.6.3",
+				"ios": true,
+				"android": true,
+				"multi": true
+			},
+			{
+				"version": "1.0",
+				"min_godot": "4.5",
+				"max_godot": "4.5.2",
+				"ios": true,
+				"android": true,
+				"multi": true
+			}
+		],
+		"sponsorship_url": "https://github.com/sponsors/cengiz-pz"
+	},
+	"qr": {
+		"name": "QR Plugin",
+		"directory": "QRPlugin",
+		"description": "A Godot mobile plugin for scanning and generating QR codes in your Godot games. This plugin provides a simple and efficient way to integrate QR code functionality into your mobile games.",
+		"author": "Godot Mobile Plugins (github.com/godot-mobile-plugins)",
+		"repository": "https://github.com/godot-mobile-plugins/godot-qr",
+		"versions": [
+			{
+				"version": "1.2",
+				"min_godot": "4.7",
+				"ios": true,
+				"android": true,
+				"multi": true
+			},
+			{
+				"version": "1.1",
+				"min_godot": "4.6",
+				"max_godot": "4.6.3",
+				"ios": true,
+				"android": true,
+				"multi": true
+			},
+			{
+				"version": "1.0",
+				"min_godot": "4.5",
+				"max_godot": "4.5.2",
+				"ios": true,
+				"android": true,
+				"multi": true
+			}
+		],
+		"sponsorship_url": "https://github.com/sponsors/cengiz-pz"
+	},
+	"Share": {
+		"name": "Share Plugin",
+		"directory": "SharePlugin",
+		"description": "A Godot mobile plugin for sharing content in your Godot games. This plugin provides a simple and efficient way to share text, images, and other media directly from your mobile games.",
+		"author": "Godot Mobile Plugins (github.com/godot-mobile-plugins)",
+		"repository": "https://github.com/godot-mobile-plugins/godot-share",
+		"versions": [
+			{
+				"version": "6.0",
+				"min_godot": "4.7",
+				"ios": true,
+				"android": true,
+				"multi": true
+			},
+			{
+				"version": "5.2",
+				"min_godot": "4.6",
+				"max_godot": "4.6.3",
+				"ios": true,
+				"android": true,
+				"multi": true
+			},
+			{
+				"version": "5.1.1",
+				"min_godot": "4.5",
+				"max_godot": "4.5.2",
+				"ios": true,
+				"android": true,
+				"multi": true
+			},
+			{
+				"version": "5.0",
+				"min_godot": "4.3",
+				"max_godot": "4.4.1",
+				"ios": true,
+				"android": true,
+				"multi": true
+			}
+		],
+		"sponsorship_url": "https://github.com/sponsors/cengiz-pz"
+	},
+	"Vision": {
+		"name": "Vision Plugin",
+		"directory": "VisionPlugin",
+		"description": "A Godot mobile plugin for integrating computer vision functionality into your Godot games. This plugin provides a simple and efficient way to analyze images and video feeds, enabling advanced gameplay features and interactive experiences.",
+		"author": "Godot Mobile Plugins (github.com/godot-mobile-plugins)",
+		"repository": "https://github.com/godot-mobile-plugins/godot-vision",
+		"versions": [
+			{
+				"version": "1.1",
+				"min_godot": "4.7",
+				"ios": true,
+				"android": true,
+				"multi": true
+			}
+		],
+		"sponsorship_url": "https://github.com/sponsors/cengiz-pz"
+	}
+}

@@ -8,7 +8,17 @@
 #import <UserNotifications/UserNotifications.h>
 
 struct NSPServiceInitializer {
-	NSPServiceInitializer() { [GDTApplicationDelegate addService:[NSPService shared]]; }
+	NSPServiceInitializer() {
+		// Skip Godot's application-delegate registration when running under XCTest.
+		// In the test environment, no Godot engine is running: registering with
+		// GDTApplicationDelegate is unnecessary and may crash because Godot's engine
+		// singletons (ClassDB, ObjectDB) have not been initialised by Main::setup().
+		// NSPService is still accessible via +shared from test code as needed.
+		if (NSClassFromString(@"XCTestCase") != nil) {
+			return;
+		}
+		[GDTApplicationDelegate addService:[NSPService shared]];
+	}
 };
 static NSPServiceInitializer initializer;
 
@@ -25,12 +35,19 @@ static NSPServiceInitializer initializer;
 
 - (instancetype)init {
 	if (self = [super init]) {
-		// Set UNUserNotificationCenter delegate immediately
-		UNUserNotificationCenter *center = [UNUserNotificationCenter currentNotificationCenter];
-		if (center.delegate != self) {
-			center.delegate = self;
-			NSLog(@"NSPService: Setting UNUserNotificationCenter delegate in init at timestamp: %f",
-					[[NSDate date] timeIntervalSince1970]);
+		// Skip UNUserNotificationCenter setup in unit-test workers.
+		// On iOS 26, currentNotificationCenter raises SIGABRT in xctest worker
+		// processes that don't have UserNotifications entitlements or a running
+		// UIApplication notification session.  In tests, NSPService is still
+		// usable via +shared; the delegate is registered in production where the
+		// full app context is present.
+		if (NSClassFromString(@"XCTestCase") == nil) {
+			UNUserNotificationCenter *center = [UNUserNotificationCenter currentNotificationCenter];
+			if (center.delegate != self) {
+				center.delegate = self;
+				NSLog(@"NSPService: Setting UNUserNotificationCenter delegate in init at timestamp: %f",
+						[[NSDate date] timeIntervalSince1970]);
+			}
 		}
 	}
 	return self;

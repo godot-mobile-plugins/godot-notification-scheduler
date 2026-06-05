@@ -200,9 +200,9 @@ func _on_cancel_button_pressed() -> void:
 func _print_to_screen(a_message: String, a_is_error: bool = false) -> void:
 	_label.add_text("%s\n\n" % a_message)
 	if a_is_error:
-		NotificationScheduler.log_error(a_message)
+		GmpLogger.log_error(a_message)
 	else:
-		NotificationScheduler.log_info(a_message)
+		GmpLogger.log_info(a_message)
 
 	_label.scroll_to_line(_label.get_line_count() - 1)
 

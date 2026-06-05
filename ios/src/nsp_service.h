@@ -8,7 +8,7 @@
 #import <UIKit/UIKit.h>
 #import <UserNotifications/UserNotifications.h>
 
-@interface NSPService : UIResponder <UIApplicationDelegate, UNUserNotificationCenterDelegate>
+@interface NSPService : UIResponder <UIApplicationDelegate, UIWindowSceneDelegate, UNUserNotificationCenterDelegate>
 
 + (instancetype)shared;
 

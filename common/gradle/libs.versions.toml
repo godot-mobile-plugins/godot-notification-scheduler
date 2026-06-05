@@ -3,31 +3,58 @@
 #
 
 [versions]
+
+# -- Android -------------------------------------------------------------------
 compileSdk = "35"
 minSdk = "24"
 buildTools = "35.0.0"
 android-lib-plugin = "8.6.1"
-kotlin-android-plugin = "2.2.0"
+
+# -- Build tool dependencies ---------------------------------------------------
+kotlin-android-plugin = "2.0.21"
 undercouch-download-plugin = "5.6.0"
+checkstyle = "12.3.1"
 openrewrite = "6.27.1"
 rewrite-static-analysis = "1.22.0"
 node-plugin = "7.1.0"
 node-env = "22.0.0"
 kotlinx-serialization = "1.6.3"
-#spotless-plugin = "8.3.0"
-#clang-format = "22.1.0"
-appcompat = "1.7.1"
+
+# -- Test dependencies ---------------------------------------------------------
+junit-jupiter = "6.0.3"
+mockito = "5.23.0"
+mockk = "1.13.17"
+opengl-api = "gl1.1-android-2.1_r1"
+
+# -- Godot plugin dependencies -------------------------------------------------
+androidx-appcompat = "1.7.1"
+
 
 [libraries]
-androidx-appcompat = { module = "androidx.appcompat:appcompat", version.ref = "appcompat" }
-rewrite-static-analysis = { module = "org.openrewrite.recipe:rewrite-static-analysis", version.ref = "rewrite-static-analysis" }
-kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinx-serialization" }
+
+# -- Build tool ----------------------------------------------------------------
+style-rewrite-static-analysis = { module = "org.openrewrite.recipe:rewrite-static-analysis", version.ref = "rewrite-static-analysis" }
+build-logic-kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinx-serialization" }
+
+# -- Test libraries (aliases starting with "test-" are loaded as testImplementation) --
+test-junit-jupiter = { module = "org.junit.jupiter:junit-jupiter", version.ref = "junit-jupiter" }
+test-mockito-core = { module = "org.mockito:mockito-core", version.ref = "mockito" }
+test-mockito-junit-jupiter = { module = "org.mockito:mockito-junit-jupiter", version.ref = "mockito" }
+test-mockk = { module = "io.mockk:mockk", version.ref = "mockk" }
+
+# -- Runtime-only test libraries (aliases starting with "test-runtime-" -> testRuntimeOnly) --
+test-runtime-junit-platform-launcher = { module = "org.junit.platform:junit-platform-launcher", version.ref = "junit-jupiter" }
+test-runtime-opengl-api = { module = "org.khronos:opengl-api", version.ref = "opengl-api" }
+
+# -- Godot plugin --------------------------------------------------------------
+runtime-androidx-appcompat = { module = "androidx.appcompat:appcompat", version.ref = "androidx-appcompat" }
+
 
 [plugins]
+
 android-library = { id = "com.android.library", version.ref = "android-lib-plugin" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin-android-plugin" }
 undercouch-download = { id = "de.undercouch.download", version.ref = "undercouch-download-plugin" }
 openrewrite = { id = "org.openrewrite.rewrite", version.ref = "openrewrite" }
 node = { id = "com.github.node-gradle.node", version.ref = "node-plugin" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin-android-plugin" }
-#spotless = { id = "com.diffplug.spotless", version.ref = "spotless-plugin" }
