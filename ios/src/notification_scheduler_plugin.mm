@@ -451,16 +451,25 @@ Error NotificationSchedulerPlugin::set_badge_count(int badgeCount) {
 
 	NSLog(@"NotificationSchedulerPlugin set_badge_count(%d)", badgeCount);
 
-	UNUserNotificationCenter *center = [UNUserNotificationCenter currentNotificationCenter];
-	[center setBadgeCount:(NSInteger)badgeCount
-			withCompletionHandler:^(NSError *_Nullable error) {
-				if (error != nil) {
-					NSLog(@"ERROR: Unable to set badge count: %@", error.localizedDescription);
-					return;
-				} else {
-					NSLog(@"DEBUG: badge count has been successfully set to %d.", badgeCount);
-				}
-			}];
+	if (@available(iOS 16.0, *)) {
+		UNUserNotificationCenter *center = [UNUserNotificationCenter currentNotificationCenter];
+		[center setBadgeCount:(NSInteger)badgeCount
+				withCompletionHandler:^(NSError *_Nullable error) {
+					if (error != nil) {
+						NSLog(@"ERROR: Unable to set badge count: %@", error.localizedDescription);
+						return;
+					} else {
+						NSLog(@"DEBUG: badge count has been successfully set to %d.", badgeCount);
+					}
+				}];
+	} else {
+		// setBadgeCount:withCompletionHandler: is iOS 16+; fall back to the
+		// UIApplication property for devices running iOS 14.3–15.x.
+		NSLog(@"DEBUG: iOS < 16 — setting badge count via UIApplication.applicationIconBadgeNumber");
+		dispatch_async(dispatch_get_main_queue(), ^{
+			[UIApplication sharedApplication].applicationIconBadgeNumber = (NSInteger)badgeCount;
+		});
+	}
 
 	return OK;
 }
@@ -483,7 +492,15 @@ Error NotificationSchedulerPlugin::open_app_info_settings() {
 		return ERR_UNCONFIGURED;
 	}
 
-	NSURL *url = [[NSURL alloc] initWithString:UIApplicationOpenNotificationSettingsURLString];
+	NSURL *url;
+	if (@available(iOS 15.4, *)) {
+		// Deep-links directly to the app's Notifications page in Settings.
+		url = [[NSURL alloc] initWithString:UIApplicationOpenNotificationSettingsURLString];
+	} else {
+		// UIApplicationOpenNotificationSettingsURLString is iOS 15.4+; on older
+		// devices open the app's general Settings page instead.
+		url = [[NSURL alloc] initWithString:UIApplicationOpenSettingsURLString];
+	}
 	[[UIApplication sharedApplication] openURL:url options:@{} completionHandler:nil];
 
 	return OK;

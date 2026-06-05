@@ -17,23 +17,12 @@ public class ResultActivity extends AppCompatActivity {
 	private static final String LOG_TAG = NotificationSchedulerPlugin.LOG_TAG + "::"
 			+ ResultActivity.class.getSimpleName();
 
-	private static final String GODOT_APP_MAIN_ACTIVITY_CLASSPATH = "com.godot.game.GodotApp";
-	private static Class<?> godotAppMainActivityClass = null;
-
-	static {
-		try {
-			godotAppMainActivityClass = Class.forName(GODOT_APP_MAIN_ACTIVITY_CLASSPATH);
-		} catch (ClassNotFoundException e) {
-			Log.e(LOG_TAG, "could not find " + GODOT_APP_MAIN_ACTIVITY_CLASSPATH);
-		}
-	}
-
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
 		Intent thisIntent = getIntent();
-		Intent godotIntent = new Intent(getApplicationContext(), godotAppMainActivityClass);
+		Intent godotIntent = getPackageManager().getLaunchIntentForPackage(getPackageName());
 		godotIntent.putExtras(thisIntent);
 		NotificationData notificationData = new NotificationData(thisIntent);
 
