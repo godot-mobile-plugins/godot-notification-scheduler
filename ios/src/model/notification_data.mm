@@ -20,6 +20,7 @@ static NSString *const NOTIFICATION_DELAY_KEY = @"delay";
 static NSString *const NOTIFICATION_INTERVAL_KEY = @"interval";
 static NSString *const NOTIFICATION_BADGE_COUNT_KEY = @"badge_count";
 static NSString *const NOTIFICATION_SMALL_ICON_NAME_KEY = @"small_icon_name";
+static NSString *const NOTIFICATION_BIG_PICTURE_NAME_KEY = @"big_picture_name";
 static NSString *const NOTIFICATION_DEEPLINK_KEY = @"deeplink";
 static NSString *const NOTIFICATION_CUSTOM_DATA_KEY = @"custom_data";
 
@@ -34,9 +35,18 @@ static const String NOTIFICATION_INTERVAL_PROPERTY = [NSPConverter toGodotString
 static const String NOTIFICATION_BADGE_COUNT_PROPERTY = [NSPConverter toGodotString:NOTIFICATION_BADGE_COUNT_KEY];
 static const String NOTIFICATION_SMALL_ICON_NAME_PROPERTY =
 		[NSPConverter toGodotString:NOTIFICATION_SMALL_ICON_NAME_KEY];
+static const String NOTIFICATION_BIG_PICTURE_NAME_PROPERTY =
+		[NSPConverter toGodotString:NOTIFICATION_BIG_PICTURE_NAME_KEY];
 static const String NOTIFICATION_DEEPLINK_PROPERTY = [NSPConverter toGodotString:NOTIFICATION_DEEPLINK_KEY];
 static const String NOTIFICATION_CUSTOM_DATA_PROPERTY = [NSPConverter toGodotString:NOTIFICATION_CUSTOM_DATA_KEY];
 static const String NOTIFICATION_RESTART_APP_PROPERTY = [NSPConverter toGodotString:NOTIFICATION_RESTART_APP_KEY];
+
+@interface NotificationData ()
+
++ (NSURL *)urlForImageResource:(NSString *)name;
+- (UNNotificationAttachment *)createBigPictureAttachment;
+
+@end
 
 @implementation NotificationData
 
@@ -54,6 +64,10 @@ static const String NOTIFICATION_RESTART_APP_PROPERTY = [NSPConverter toGodotStr
 		}
 		if (notificationData.has(NOTIFICATION_DEEPLINK_PROPERTY)) {
 			self.deeplink = [NSPConverter toNsString:(String)notificationData[NOTIFICATION_DEEPLINK_PROPERTY]];
+		}
+		if (notificationData.has(NOTIFICATION_BIG_PICTURE_NAME_PROPERTY)) {
+			self.bigPictureName =
+					[NSPConverter toNsString:(String)notificationData[NOTIFICATION_BIG_PICTURE_NAME_PROPERTY]];
 		}
 		if (notificationData.has(NOTIFICATION_INTERVAL_PROPERTY)) {
 			self.interval = [NSPConverter toNsNumber:notificationData[NOTIFICATION_INTERVAL_PROPERTY]].integerValue;
@@ -86,6 +100,13 @@ static const String NOTIFICATION_RESTART_APP_PROPERTY = [NSPConverter toGodotStr
 		self.notificationContent.categoryIdentifier = self.channelId;
 		self.notificationContent.sound = [UNNotificationSound defaultSound];
 		self.notificationContent.badge = @(self.badgeCount);
+
+		if (self.bigPictureName.length > 0) {
+			UNNotificationAttachment *attachment = [self createBigPictureAttachment];
+			if (attachment) {
+				self.notificationContent.attachments = @[ attachment ];
+			}
+		}
 	}
 	return self;
 }
@@ -101,6 +122,7 @@ static const String NOTIFICATION_RESTART_APP_PROPERTY = [NSPConverter toGodotStr
 		self.badgeCount = [nsDict[NOTIFICATION_BADGE_COUNT_KEY] integerValue];
 		self.deeplink = nsDict[NOTIFICATION_DEEPLINK_KEY];
 		self.customData = nsDict[NOTIFICATION_CUSTOM_DATA_KEY];
+		self.bigPictureName = nsDict[NOTIFICATION_BIG_PICTURE_NAME_KEY];
 		// Unsupported fields
 		self.smallIconName = nsDict[NOTIFICATION_SMALL_ICON_NAME_KEY];
 		self.restartApp = nsDict[NOTIFICATION_RESTART_APP_KEY];
@@ -135,6 +157,9 @@ static const String NOTIFICATION_RESTART_APP_PROPERTY = [NSPConverter toGodotStr
 	}
 	if (self.customData) {
 		dict[NOTIFICATION_CUSTOM_DATA_PROPERTY] = [NSPConverter toGodotDictionary:self.customData];
+	}
+	if (self.bigPictureName) {
+		dict[NOTIFICATION_BIG_PICTURE_NAME_PROPERTY] = [NSPConverter toGodotString:self.bigPictureName];
 	}
 	// Unsupported fields
 	if (self.smallIconName) {
@@ -178,6 +203,9 @@ static const String NOTIFICATION_RESTART_APP_PROPERTY = [NSPConverter toGodotStr
 	}
 	if (self.customData) {
 		dict[NOTIFICATION_CUSTOM_DATA_KEY] = self.customData;
+	}
+	if (self.bigPictureName) {
+		dict[NOTIFICATION_BIG_PICTURE_NAME_KEY] = self.bigPictureName;
 	}
 	if (self.restartApp) {
 		dict[NOTIFICATION_RESTART_APP_KEY] = @(YES);
@@ -246,6 +274,83 @@ static const String NOTIFICATION_RESTART_APP_PROPERTY = [NSPConverter toGodotStr
 	}
 
 	return resultString;
+}
+
+#pragma mark - Big picture
+
+// Resolves a resource name (e.g. "my_big_picture" or "my_big_picture.png") to a bundled file
+// URL. Names without an extension are matched against common image extensions.
++ (NSURL *)urlForImageResource:(NSString *)name {
+	NSBundle *bundle = [NSBundle mainBundle];
+	NSString *path = nil;
+
+	NSString *extension = [name pathExtension];
+	if (extension.length > 0) {
+		path = [bundle pathForResource:[name stringByDeletingPathExtension] ofType:extension];
+	}
+
+	if (!path) {
+		for (NSString *candidateExtension in @[ @"png", @"jpg", @"jpeg", @"heic", @"gif" ]) {
+			path = [bundle pathForResource:name ofType:candidateExtension];
+			if (path) {
+				break;
+			}
+		}
+	}
+
+	return path ? [NSURL fileURLWithPath:path] : nil;
+}
+
+// Builds a UNNotificationAttachment from `bigPictureName` so it's shown as an expanded image
+// when the notification is presented (the closest iOS equivalent of Android's BigPictureStyle).
+// Returns nil (and logs a warning) if the image can't be found or the attachment can't be
+// created; the notification is still delivered without the image in that case.
+- (UNNotificationAttachment *)createBigPictureAttachment {
+	NSURL *imageUrl = [NotificationData urlForImageResource:self.bigPictureName];
+	if (!imageUrl) {
+		NSLog(@"NotificationData: WARNING: Could not find a bundled image named '%@' for big picture",
+				self.bigPictureName);
+		return nil;
+	}
+
+	// UNNotificationAttachment takes ownership of (and may move) the file at the given URL, so
+	// copy the bundled (read-only) resource into a private, writable temporary location first.
+	NSFileManager *fileManager = [NSFileManager defaultManager];
+	NSString *uniqueDirectory =
+			[NSTemporaryDirectory() stringByAppendingPathComponent:[[NSProcessInfo processInfo] globallyUniqueString]];
+
+	NSError *error = nil;
+	if (![fileManager createDirectoryAtPath:uniqueDirectory
+				withIntermediateDirectories:YES
+								 attributes:nil
+									  error:&error]) {
+		NSLog(@"NotificationData: WARNING: Could not create temp directory for big picture attachment: %@",
+				error.localizedDescription);
+		return nil;
+	}
+
+	NSURL *destinationUrl =
+			[NSURL fileURLWithPath:[uniqueDirectory stringByAppendingPathComponent:imageUrl.lastPathComponent]];
+
+	error = nil;
+	if (![fileManager copyItemAtURL:imageUrl toURL:destinationUrl error:&error]) {
+		NSLog(@"NotificationData: WARNING: Could not copy big picture image '%@' for attachment: %@",
+				self.bigPictureName, error.localizedDescription);
+		return nil;
+	}
+
+	NSString *identifier = [NSString stringWithFormat:@"big_picture_%@", self.notificationId];
+	error = nil;
+	UNNotificationAttachment *attachment = [UNNotificationAttachment attachmentWithIdentifier:identifier
+																						  URL:destinationUrl
+																					  options:nil
+																						error:&error];
+	if (!attachment) {
+		NSLog(@"NotificationData: WARNING: Could not create attachment for big picture '%@': %@", self.bigPictureName,
+				error.localizedDescription);
+	}
+
+	return attachment;
 }
 
 @end

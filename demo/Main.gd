@@ -158,6 +158,9 @@ func _on_send_button_pressed() -> void:
 		. set_delay(roundi(_delay_slider.value))
 	)
 
+	# Uncomment after placing the image file in the proper directory for the target platform.
+	# __notification_data.set_big_picture_name("sample_big_picture")
+
 	if _interval_checkbox.button_pressed:
 		__notification_data.set_interval(roundi(_interval_slider.value))
 

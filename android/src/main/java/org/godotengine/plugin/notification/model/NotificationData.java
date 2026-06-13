@@ -42,6 +42,7 @@ public class NotificationData {
 	public static final String DATA_KEY_CONTENT = "content";
 	public static final String DATA_KEY_SMALL_ICON_NAME = "small_icon_name";
 	public static final String DATA_KEY_LARGE_ICON_NAME = "large_icon_name";
+	public static final String DATA_KEY_BIG_PICTURE_NAME = "big_picture_name";
 	public static final String DATA_KEY_DELAY = "delay";
 	public static final String DATA_KEY_DEEPLINK = "deeplink";
 	public static final String DATA_KEY_INTERVAL = "interval";
@@ -52,8 +53,8 @@ public class NotificationData {
 
 	private static final String ICON_RESOURCE_TYPE = "drawable";
 
-	private static final int DEFAULT_LARGE_ICON_WIDTH = 512;
-	private static final int DEFAULT_LARGE_ICON_HEIGHT = 512;
+	private static final int DEFAULT_BITMAP_WIDTH = 512;
+	private static final int DEFAULT_BITMAP_HEIGHT = 512;
 
 	private Dictionary data;
 
@@ -80,6 +81,9 @@ public class NotificationData {
 		}
 		if (json.has(DATA_KEY_LARGE_ICON_NAME)) {
 			data.put(DATA_KEY_LARGE_ICON_NAME, json.opt(DATA_KEY_LARGE_ICON_NAME));
+		}
+		if (json.has(DATA_KEY_BIG_PICTURE_NAME)) {
+			data.put(DATA_KEY_BIG_PICTURE_NAME, json.opt(DATA_KEY_BIG_PICTURE_NAME));
 		}
 		if (json.has(DATA_KEY_DELAY)) {
 			data.put(DATA_KEY_DELAY, json.opt(DATA_KEY_DELAY));
@@ -138,6 +142,9 @@ public class NotificationData {
 		}
 		if (intent.hasExtra(DATA_KEY_LARGE_ICON_NAME)) {
 			data.put(DATA_KEY_LARGE_ICON_NAME, intent.getStringExtra(DATA_KEY_LARGE_ICON_NAME));
+		}
+		if (intent.hasExtra(DATA_KEY_BIG_PICTURE_NAME)) {
+			data.put(DATA_KEY_BIG_PICTURE_NAME, intent.getStringExtra(DATA_KEY_BIG_PICTURE_NAME));
 		}
 		if (intent.hasExtra(DATA_KEY_DELAY)) {
 			data.put(DATA_KEY_DELAY, intent.getIntExtra(DATA_KEY_DELAY, -1));
@@ -198,6 +205,18 @@ public class NotificationData {
 
 	public String getLargeIconName() {
 		return (String) data.get(DATA_KEY_LARGE_ICON_NAME);
+	}
+
+	public boolean hasBigPictureName() {
+		return data.containsKey(DATA_KEY_BIG_PICTURE_NAME);
+	}
+
+	/**
+	 * Name of a drawable resource to display as an expanded "big picture" image when the
+	 * notification is expanded (see {@link androidx.core.app.NotificationCompat.BigPictureStyle}).
+	 */
+	public String getBigPictureName() {
+		return (String) data.get(DATA_KEY_BIG_PICTURE_NAME);
 	}
 
 	/**
@@ -325,6 +344,10 @@ public class NotificationData {
 			intent.putExtra(DATA_KEY_LARGE_ICON_NAME, this.getLargeIconName());
 		}
 
+		if (this.hasBigPictureName()) {
+			intent.putExtra(DATA_KEY_BIG_PICTURE_NAME, this.getBigPictureName());
+		}
+
 		if (this.hasInterval()) {
 			intent.putExtra(DATA_KEY_INTERVAL, this.getInterval());
 		}
@@ -401,26 +424,22 @@ public class NotificationData {
 				.setAutoCancel(true);
 
 		if (this.hasLargeIconName()) {
-			int largeIconId = resources.getIdentifier(this.getLargeIconName(), ICON_RESOURCE_TYPE,
-					context.getPackageName());
+			Bitmap largeIconBitmap = loadBitmapFromDrawable(context, this.getLargeIconName());
+			if (largeIconBitmap != null) {
+				notificationBuilder.setLargeIcon(largeIconBitmap);
+			}
+		}
 
-			if (largeIconId != 0) {
-				// Use Context to load the drawable (supports Vectors correctly)
-				Drawable drawable = null;
-				try {
-					drawable = context.getDrawable(largeIconId);
-				} catch (Resources.NotFoundException e) {
-					Log.w(LOG_TAG, "Resource not found for large icon: " + this.getLargeIconName());
-				}
-
-				if (drawable != null) {
-					Bitmap largeIconBitmap = drawableToBitmap(drawable);
-					notificationBuilder.setLargeIcon(largeIconBitmap);
-				} else {
-					Log.w(LOG_TAG, "Could not load drawable for large icon: " + this.getLargeIconName());
-				}
+		if (this.hasBigPictureName()) {
+			Bitmap bigPictureBitmap = loadBitmapFromDrawable(context, this.getBigPictureName());
+			if (bigPictureBitmap != null) {
+				// Show the image when the notification is expanded. The large icon (if any) is
+				// hidden in the expanded view so the picture isn't shown twice.
+				notificationBuilder.setStyle(new NotificationCompat.BigPictureStyle()
+						.bigPicture(bigPictureBitmap)
+						.bigLargeIcon((Bitmap) null));
 			} else {
-				Log.w(LOG_TAG, "Large icon resource ID not found for name: " + this.getLargeIconName());
+				Log.w(LOG_TAG, "Could not apply big picture style using: " + this.getBigPictureName());
 			}
 		}
 
@@ -429,6 +448,39 @@ public class NotificationData {
 		}
 
 		return notificationBuilder.build();
+	}
+
+	/**
+	 * Loads a drawable resource by name and converts it to a {@link Bitmap}. Used for both the
+	 * notification's large icon and its optional big picture image.
+	 *
+	 * @param context Context used to resolve the package's resources
+	 * @param drawableName name of the drawable resource (without file extension)
+	 * @return the loaded Bitmap, or {@code null} if the resource could not be found or loaded
+	 */
+	private Bitmap loadBitmapFromDrawable(Context context, String drawableName) {
+		Resources resources = context.getResources();
+		int resourceId = resources.getIdentifier(drawableName, ICON_RESOURCE_TYPE, context.getPackageName());
+
+		if (resourceId == 0) {
+			Log.w(LOG_TAG, "Drawable resource ID not found for name: " + drawableName);
+			return null;
+		}
+
+		// Use Context to load the drawable (supports Vectors correctly)
+		Drawable drawable = null;
+		try {
+			drawable = context.getDrawable(resourceId);
+		} catch (Resources.NotFoundException e) {
+			Log.w(LOG_TAG, "Resource not found for drawable: " + drawableName);
+		}
+
+		if (drawable == null) {
+			Log.w(LOG_TAG, "Could not load drawable: " + drawableName);
+			return null;
+		}
+
+		return drawableToBitmap(drawable);
 	}
 
 	private Bitmap drawableToBitmap(Drawable drawable) {
@@ -442,8 +494,8 @@ public class NotificationData {
 
 		// Default to a square if intrinsic size is missing (edge case for some XML shapes)
 		if (width <= 0 || height <= 0) {
-			width = DEFAULT_LARGE_ICON_WIDTH;
-			height = DEFAULT_LARGE_ICON_HEIGHT;
+			width = DEFAULT_BITMAP_WIDTH;
+			height = DEFAULT_BITMAP_HEIGHT;
 		}
 
 		Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
