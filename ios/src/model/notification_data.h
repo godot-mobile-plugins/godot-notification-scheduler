@@ -22,6 +22,7 @@ extern NSString *const PENDING_ACTION_KEY;
 @property(nonatomic, strong) NSString *title;
 @property(nonatomic, strong) NSString *content;
 @property(nonatomic, strong) NSString *smallIconName;
+@property(nonatomic, strong) NSString *bigPictureName;
 @property(nonatomic) NSInteger delay;
 @property(nonatomic, strong) NSString *deeplink;
 @property(nonatomic) NSInteger interval;

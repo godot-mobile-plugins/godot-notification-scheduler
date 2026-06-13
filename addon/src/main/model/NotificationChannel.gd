@@ -6,11 +6,11 @@ class_name NotificationChannel extends RefCounted
 
 enum Importance { NONE = 0, MIN = 1, LOW = 2, DEFAULT = 3, HIGH = 4, MAX = 5 }  # MAX not used as of SDK 34
 
-const DATA_KEY_ID = "channel_id"
-const DATA_KEY_NAME = "channel_name"
-const DATA_KEY_DESCRIPTION = "channel_description"
-const DATA_KEY_IMPORTANCE = "channel_importance"
-const DATA_KEY_BADGE_ENABLED = "badge_enabled"
+const DATA_KEY_ID := &"channel_id"
+const DATA_KEY_NAME := &"channel_name"
+const DATA_KEY_DESCRIPTION := &"channel_description"
+const DATA_KEY_IMPORTANCE := &"channel_importance"
+const DATA_KEY_BADGE_ENABLED := &"badge_enabled"
 
 var _data: Dictionary
 

@@ -37,7 +37,7 @@ func _exit_tree() -> void:
 
 
 class AndroidExportPlugin extends EditorExportPlugin:
-	const PLUGIN_ASSETS_DIRECTORY = "res://assets/%s" % PLUGIN_NAME
+	const PLUGIN_ASSETS_DIRECTORY = "res://assets/%s/android" % PLUGIN_NAME
 	const ANDROID_RES_DIRECTORY = "res://android/build/res"
 
 
@@ -57,12 +57,13 @@ class AndroidExportPlugin extends EditorExportPlugin:
 
 
 	func _export_begin(_features: PackedStringArray, _is_debug: bool, path: String, _flags: int) -> void:
-		if not DirAccess.dir_exists_absolute(PLUGIN_ASSETS_DIRECTORY):
-			GmpLogger.log_error("Error: %s's assets directory not found! \"%s\""
-					% [PLUGIN_NAME, PLUGIN_ASSETS_DIRECTORY])
-		else:
-			# copy notification assets
-			_copy(PLUGIN_ASSETS_DIRECTORY, ANDROID_RES_DIRECTORY)
+		if _supports_platform(get_export_platform()):
+			if not DirAccess.dir_exists_absolute(PLUGIN_ASSETS_DIRECTORY):
+				GmpLogger.log_error("Error: %s's assets directory not found! \"%s\""
+						% [PLUGIN_NAME, PLUGIN_ASSETS_DIRECTORY])
+			else:
+				# copy notification assets
+				_copy(PLUGIN_ASSETS_DIRECTORY, ANDROID_RES_DIRECTORY)
 
 
 	func _get_android_dependencies(platform: EditorExportPlatform, debug: bool) -> PackedStringArray:
@@ -181,6 +182,19 @@ class IosExportPlugin extends EditorExportPlugin:
 
 			for __spm_dep in SPM_DEPENDENCIES:
 				_spm_dependencies.append(SpmDependency.new(__spm_dep))
+
+			# Copy bundled images for iOS if they exist
+			var __ios_assets_path = "res://assets/%s/ios" % PLUGIN_NAME
+			if DirAccess.dir_exists_absolute(__ios_assets_path):
+				var __bundle_files: PackedStringArray = DirAccess.get_files_at(__ios_assets_path)
+
+				for __bundle_file in __bundle_files:
+					if not __bundle_file.ends_with(".import") and not __bundle_file.ends_with(".uid"):
+						var __full_source_path = __ios_assets_path.path_join(__bundle_file)
+						add_apple_embedded_platform_bundle_file(__full_source_path)
+						GmpLogger.log_info("Added iOS bundle file \"%s\"." % __full_source_path)
+			else:
+				GmpLogger.log_info("No iOS assets directory found for plugin. Skipping adding bundle files.")
 
 
 	func _end_generate_apple_embedded_project(path: String, will_build_archive: bool) -> void:

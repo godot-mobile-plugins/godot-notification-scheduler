@@ -4,19 +4,20 @@
 
 class_name NotificationData extends RefCounted
 
-const DATA_KEY_ID = "notification_id"
-const DATA_KEY_CHANNEL_ID = "channel_id"
-const DATA_KEY_TITLE = "title"
-const DATA_KEY_CONTENT = "content"
-const DATA_KEY_SMALL_ICON_NAME = "small_icon_name"
-const DATA_KEY_LARGE_ICON_NAME = "large_icon_name"
-const DATA_KEY_DELAY = "delay"
-const DATA_KEY_DEEPLINK = "deeplink"
-const DATA_KEY_INTERVAL = "interval"
-const DATA_KEY_BADGE_COUNT = "badge_count"
-const DATA_KEY_CUSTOM_DATA = "custom_data"
+const DATA_KEY_ID := &"notification_id"
+const DATA_KEY_CHANNEL_ID := &"channel_id"
+const DATA_KEY_TITLE := &"title"
+const DATA_KEY_CONTENT := &"content"
+const DATA_KEY_SMALL_ICON_NAME := &"small_icon_name"
+const DATA_KEY_LARGE_ICON_NAME := &"large_icon_name"
+const DATA_KEY_BIG_PICTURE_NAME := &"big_picture_name"
+const DATA_KEY_DELAY := &"delay"
+const DATA_KEY_DEEPLINK := &"deeplink"
+const DATA_KEY_INTERVAL := &"interval"
+const DATA_KEY_BADGE_COUNT := &"badge_count"
+const DATA_KEY_CUSTOM_DATA := &"custom_data"
 
-const OPTION_KEY_RESTART_APP = "restart_app"
+const OPTION_KEY_RESTART_APP := &"restart_app"
 
 const DEFAULT_DATA: Dictionary = {
 	DATA_KEY_ID: NotificationScheduler.DEFAULT_NOTIFICATION_ID,
@@ -57,6 +58,11 @@ func set_small_icon_name(a_small_icon_name: String) -> NotificationData:
 
 func set_large_icon_name(a_large_icon_name: String) -> NotificationData:
 	_data[DATA_KEY_LARGE_ICON_NAME] = a_large_icon_name
+	return self
+
+
+func set_big_picture_name(a_big_picture_name: String) -> NotificationData:
+	_data[DATA_KEY_BIG_PICTURE_NAME] = a_big_picture_name
 	return self
 
 
@@ -112,6 +118,10 @@ func get_small_icon_name() -> String:
 
 func get_large_icon_name() -> String:
 	return _data[DATA_KEY_LARGE_ICON_NAME] if _data.has(DATA_KEY_LARGE_ICON_NAME) else ""
+
+
+func get_big_picture_name() -> String:
+	return _data[DATA_KEY_BIG_PICTURE_NAME] if _data.has(DATA_KEY_BIG_PICTURE_NAME) else ""
 
 
 func get_delay() -> int:

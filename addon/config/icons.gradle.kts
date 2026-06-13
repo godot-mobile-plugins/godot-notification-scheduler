@@ -16,15 +16,15 @@ tasks {
         dependsOn("cleanIcons")
 
         from("../android/assets")
-        into("${project.extra["outputDir"]}/assets/${project.extra["pluginName"]}")
+        into("${project.extra["outputDir"]}/assets/${project.extra["pluginName"]}/android")
     }
 
     register<Copy>("installIconsToDemo") {
         description = "Copies the notification icons to the plugin's assets directory"
         dependsOn("cleanIcons")
 
-        from("${project.extra["outputDir"]}/assets/${project.extra["pluginName"]}")
-        into("../demo/assets/${project.extra["pluginName"]}")
+        from("${project.extra["outputDir"]}/assets/${project.extra["pluginName"]}/android")
+        into("../demo/assets/${project.extra["pluginName"]}/android")
     }
 }
 
