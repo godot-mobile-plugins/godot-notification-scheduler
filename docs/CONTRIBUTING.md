@@ -276,7 +276,7 @@ The `ios/config/config.properties` file contains iOS-specific settings:
 
 ```properties
 # iOS deployment target
-platform_version=14.3
+platform_version=15.0
 
 # iOS system framework dependencies
 frameworks=Foundation.framework,...
